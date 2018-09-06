@@ -1,0 +1,76 @@
+workspace:
+  base: /python
+  path: github.com/election-boards
+pipeline:
+  start_slack:
+    image: plugins/slack
+    channel: jenkins
+    secrets: [slack_webhook]
+    username: election-boards
+    icon_url: https://upload.wikimedia.org/wikipedia/commons/thumb/c/c3/Python-logo-notext.svg/240px-Python-logo-notext.svg.png
+    template: >
+      *start* building *{{repo.name}}*.
+      *{{build.author}}* give *{{build.branch}}* a little push.
+    when:
+      event: [push]
+      branch: [master, dev]
+  
+  get_config:
+    image: gcr.io/mirrormedia-1470651750304/drone-cloud-sdk:latest
+    secrets: [google_credentials]
+    commands:
+    - gcloud source repos clone default ../default
+    - cp ../default/election-boards/production.py ./election_boards/settings/production.py
+    when:
+      event: [push]
+      branch: [master, dev]
+  
+  builds:
+    image: plugins/gcr
+    repo: mirrormedia-1470651750304/${DRONE_REPO_NAME}
+    tag: ${DRONE_COMMIT_AUTHOR}_${DRONE_COMMIT_BRANCH}_${DRONE_BUILD_NUMBER}
+    environment:
+      - DOCKER_LAUNCH_DEBUG=true
+    secrets: [google_credentials]
+    when:
+      event: [push]
+      branch: [master, dev]
+  
+  deploy:
+    image: nytimes/drone-gke:develop
+    zone: asia-east1-a
+    cluster: dev
+    namespace: default
+    # For debugging
+    dry_run: false
+    verbose: true
+    secrets:
+      - source: google_credentials
+        target: token
+    vars:
+      image: gcr.io/mirrormedia-1470651750304/${DRONE_REPO_NAME}:${DRONE_COMMIT_AUTHOR}_${DRONE_COMMIT_BRANCH}_${DRONE_BUILD_NUMBER}
+      app: election-boards
+      tier: backend
+      serviceName: election-boards
+      deployName: election-boards
+    when:
+      event: [push]
+      branch: master
+
+  finish_slack:
+    image: plugins/slack
+    channel: jenkins
+    secrets: [slack_webhook]
+    username: electin-boards
+    icon_url: https://upload.wikimedia.org/wikipedia/commons/thumb/c/c3/Python-logo-notext.svg/240px-Python-logo-notext.svg.png
+    when:
+      status: [success, failure]
+      event: [push]
+      branch: [master, dev]
+    template: >
+      {{#success build.status}}
+        Build<${DRONE_BUILD_LINK}|#{{build.number}}> *success* ${DRONE_REPO_NAME}:${DRONE_COMMIT_AUTHOR}_${DRONE_COMMIT_BRANCH}_${DRONE_BUILD_NUMBER} was well served.
+        Check out our new <https://gcr.io/mirrormedia-1470651750304/election-boards|rest>
+      {{else}}
+        Houston, we have a problem. Build <${DRONE_BUILD_LINK}|#{{build.number}}> failed. Fix me please, {{build.author}}
+      {{/success}}
