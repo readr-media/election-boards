@@ -1,12 +1,6 @@
-from rest_framework import viewsets, serializers
+from rest_framework import viewsets
 from .models import Terms
-
-# Create your views here.
-
-class CandidatesTermsSerializer(serializers.HyperlinkedModelSerializer):
-    class Meta:
-        model = Terms
-        fields = '__all__'
+from .serializers import CandidatesTermsSerializer
 
 class CandidatesTermsViewSet(viewsets.ReadOnlyModelViewSet):
     queryset = Terms.objects.all().select_related('candidate')
