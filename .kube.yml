@@ -1,0 +1,59 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{.serviceName}}
+spec:
+  selector:
+    app: {{.app}}
+    tier: {{.tier}}
+  ports:
+  - port: 8080
+    protocol: TCP
+    targetPort: http
+  type: LoadBalancer
+---
+apiVersion: extensions/v1beta1
+kind: Deployment
+metadata:
+  labels:
+    app: {{.app}}
+    tier: {{.tier}}
+  name: {{.deployName}}
+spec:
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        app: {{.app}}
+        tier: {{.tier}}
+    spec:
+      containers:
+      - image: {{.image}}
+        name: {{.app}}
+        ports:
+        - containerPort: 8080
+          name: http
+          protocol: TCP
+      - image: gcr.io/cloudsql-docker/gce-proxy:1.10
+        name: cloudsql-proxy
+        command: ["/cloud_sql_proxy", "--dir=/cloudsql",
+                  "-instances=mirrormedia-1470651750304:asia-east1:election-boards=tcp:5432",
+                  "-credential_file=/secrets/cloudsql/credentials.json"]
+        volumeMounts:
+          - name: election-boards-credentials
+            mountPath: /secrets/cloudsql
+            readOnly: true
+          - name: cloudsql
+            mountPath: /cloudsql
+      volumes:
+        - name: election-boards-credentials
+          secret:
+            secretName: election-boards-credentials
+        - name: cloudsql
+          emptyDir:
+  revisionHistoryLimit: 5
+  strategy:
+    rollingUpdate:
+      maxSurge: 1
+      maxUnavailable: 0
+    type: RollingUpdate
