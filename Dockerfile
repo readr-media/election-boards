@@ -18,4 +18,5 @@ RUN apk update \
     && chown -R user:user /tmp/log/uwsgi
 
 EXPOSE 8080
-CMD ["/usr/local/bin/uwsgi", "--ini", "uwsgi.ini"]
+CMD ["python", "manage.py", "runserver", "8080"]
+# CMD ["/usr/local/bin/uwsgi", "--ini", "uwsgi.ini"]
