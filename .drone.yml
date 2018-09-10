@@ -55,7 +55,7 @@ pipeline:
       deployName: election-boards
     when:
       event: [push]
-      branch: master
+      branch: [master,dev]
 
   finish_slack:
     image: plugins/slack
