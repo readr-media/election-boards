@@ -1,4 +1,4 @@
 __pycache__
 election_boards/settings/production.py
-*/migrations
-migrations/*
+# */migrations
+# migrations/*

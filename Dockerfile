@@ -13,7 +13,8 @@ RUN apk update \
         --repository http://dl-cdn.alpinelinux.org/alpine/edge/testing \
         gdal-dev \
     && pip install --upgrade pip \
-    && pip install -r requirements.txt
+    && pip install -r requirements.txt \
+    && python manage.py migrate
 
 EXPOSE 8080
 CMD ["/usr/local/bin/uwsgi", "--ini", "uwsgi.ini"]

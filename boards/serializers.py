@@ -1,10 +1,15 @@
 from rest_framework import serializers
 from .models import Boards
-from candidates.models import Candidates
-from candidates.serializers import CandidatesSerializer
+from candidates.models import Candidates, Terms
+
+class BoardsTermsSerializer(serializers.HyperlinkedModelSerializer):
+    class Meta:
+        model = Terms
+        fields = ('uid', 'election_year', 'type', 'county', 'district', 'name', 'party', 'number', 'image')
+
 
 class BoardsGetSerializer(serializers.ModelSerializer):
-    candidates = CandidatesSerializer(many=True,read_only=True)
+    candidates = BoardsTermsSerializer(many=True,read_only=True)
     
     class Meta:
         model = Boards
@@ -18,7 +23,7 @@ class BoardsGetSerializer(serializers.ModelSerializer):
         return ret
 
 class BoardsPostSerializer(serializers.ModelSerializer):
-    candidates = serializers.PrimaryKeyRelatedField(many=True, queryset=Candidates.objects.all())
+    candidates = serializers.PrimaryKeyRelatedField(many=True, queryset=Terms.objects.all())
 
     class Meta:
         model = Boards
