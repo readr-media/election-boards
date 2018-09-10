@@ -15,7 +15,7 @@ RUN apk update \
     && pip install --upgrade pip \
     && pip install -r requirements.txt \
     && mkdir -p /tmp/log/uwsgi \
-    && chown -R user:user /var/log/uwsgi
+    && chown -R user:user /tmp/log/uwsgi
 
 EXPOSE 8080
 CMD ["/usr/local/bin/uwsgi", "--ini", "uwsgi.ini"]
