@@ -15,16 +15,28 @@ pipeline:
       event: [push]
       branch: [master, dev]
   
-  get_config:
+  
+  get_dev_config:
     image: gcr.io/mirrormedia-1470651750304/drone-cloud-sdk:latest
     secrets: [google_credentials]
     commands:
     - gcloud source repos clone default ../default
-    - cp ../default/election-boards/production.py ./election_boards/settings/production.py
+    - cp ../default/election-boards/dev/dev.py ./election_boards/settings/production.py
     when:
       event: [push]
-      branch: [master, dev]
-  
+      branch: dev
+
+  get_production_config:
+    image: gcr.io/mirrormedia-1470651750304/drone-cloud-sdk:latest
+    secrets: [google_credentials]
+    commands:
+    - gcloud source repos clone default ../default
+    - cp ../default/election-boards/production/production.py ./election_boards/settings/production.py
+    - cp ../default/election-boards/production/uwsgi.ini ./uwsgi.ini 
+    when:
+      event: [push]
+      branch: master
+ 
   builds:
     image: plugins/gcr
     repo: mirrormedia-1470651750304/${DRONE_REPO_NAME}
@@ -55,7 +67,7 @@ pipeline:
       deployName: election-boards
     when:
       event: [push]
-      branch: master
+      branch: dev
 
   finish_slack:
     image: plugins/slack
