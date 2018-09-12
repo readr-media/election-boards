@@ -21,12 +21,14 @@ class CheckBoardView(views.APIView):
     permission_classes = []
 
     # Return single board with minimum verified_amount, uploaded earliest
-    def get(self, request, format=None):
-        board = Boards.objects.order_by('verified_amount', 'uploaded_at')[0]
+    # And rule out specific user by using ?user=[UUID]
+    def get(self, request):
+        user = request.query_params.get('user', None)
+        board = Boards.objects.exclude(uploaded_by=user).order_by('verified_amount', 'uploaded_at')[0]
         serializer = BoardsGetSerializer(board)
         return response.Response(serializer.data)
 
-    def post(self, request, formant=None):
+    def post(self, request):
         serializer = CheckBoardDeserializer(data=request.data)
         if serializer.is_valid():
             serializer.save()
