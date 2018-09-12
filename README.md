@@ -19,7 +19,7 @@ If the service not start automatically:
 brew services start postgresql
 ```
 
-#### Install PostGIS extension
+#### Install PostGIS extension
 On Mac you need to install extra library `postgis` on your machine before create extension in postgresql:
 ```bash
 brew install postgis;

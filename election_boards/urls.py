@@ -18,14 +18,16 @@ from django.urls import path, re_path, include
 from rest_framework import routers
 from candidates.views import CandidatesTermsViewSet
 from councilors.views import CouncilorsDetailViewSet
-from boards.views import BoardsViewSet, SingleBoardViewSet
+# from boards.views import BoardsViewSet, SingleBoardViewSet, SingleVerificationViewSet, MultiVerificationViewSet 
 
 router = routers.DefaultRouter()
 router.register(r'candidates_terms', CandidatesTermsViewSet)
 router.register(r'councilors_terms', CouncilorsDetailViewSet)
-router.register(r'boards', BoardsViewSet)
-router.register(r'board', SingleBoardViewSet)
-
+# router.register(r'boards', BoardsViewSet)
+# router.register(r'board', SingleBoardViewSet)
+# router.register(r'verify/board', SingleVerificationViewSet)
+# router.register(r'verify/boards', MultiVerificationViewSet)
 urlpatterns = [
-    re_path(r'^api/', include(router.urls))
+    re_path(r'^api/', include(router.urls)),
+    re_path(r'^api/', include('boards.urls'))
 ]

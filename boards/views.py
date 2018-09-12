@@ -1,7 +1,39 @@
-from rest_framework import viewsets, mixins
-from .models import Boards
-from .serializers import BoardsGetSerializer, BoardsPostSerializer
+from rest_framework import viewsets, mixins, views, response, status
+from .models import Boards, Checks
+from .serializers import BoardsGetSerializer, BoardsPostSerializer, CheckBoardDeserializer 
 
+class BoardsList(views.APIView):
+    permission_classes = []
+
+    def get(self, request, format=None):
+        boards = Boards.objects.all()
+        serializer = BoardsGetSerializer(boards, many=True) 
+        return response.Response(serializer.data)
+    
+    def post(self, request, format=None):
+        serializer = BoardsPostSerializer(data=request.data) 
+        if serializer.is_valid():
+            serializer.save()
+            return response.Response(serializer.data, status=status.HTTP_201_CREATED)
+        return response.Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+class CheckBoardView(views.APIView):
+    permission_classes = []
+
+    # Return single board with minimum verified_amount, uploaded earliest
+    def get(self, request, format=None):
+        board = Boards.objects.order_by('verified_amount', 'uploaded_at')[0]
+        serializer = BoardsGetSerializer(board)
+        return response.Response(serializer.data)
+
+    def post(self, request, formant=None):
+        serializer = CheckBoardDeserializer(data=request.data)
+        if serializer.is_valid():
+            serializer.save()
+            return response.Response(serializer.data, status=status.HTTP_201_CREATED)
+        return response.Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+################### ViewSet implementation. Deprecated. ####################
 # Create your views here.
 class BoardsViewSet(mixins.ListModelMixin, viewsets.GenericViewSet):
     queryset = Boards.objects.all()
