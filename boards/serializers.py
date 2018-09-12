@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from .models import Boards
+from .models import Boards, Checks
 from candidates.models import Candidates, Terms
 
 class BoardsTermsSerializer(serializers.HyperlinkedModelSerializer):
@@ -49,3 +49,25 @@ class BoardsPostSerializer(serializers.ModelSerializer):
         del ret['coordinates']
         ret['coordinates'] = '({},{})'.format(location[0],location[1])
         return ret
+
+class CheckBoardDeserializer(serializers.ModelSerializer):
+
+    board = serializers.PrimaryKeyRelatedField(queryset=Boards.objects.all())
+    candidates = serializers.PrimaryKeyRelatedField(many=True, queryset=Terms.objects.all())
+
+    class Meta:
+        model = Checks
+        fields = '__all__'
+
+    def create(self, validated_data):
+        check_candidates = validated_data.pop('candidates')
+        check = Checks.objects.create(**validated_data)
+
+        # Create relationship
+        for candidate in check_candidates:
+            check.candidates.add(candidate)
+        
+        # Update verified_amount in board table
+        check.board.verified_amount += 1
+        check.board.save() 
+        return check
