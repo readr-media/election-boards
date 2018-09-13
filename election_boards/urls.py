@@ -20,6 +20,8 @@ from candidates.views import CandidatesTermsViewSet
 from councilors.views import CouncilorsDetailViewSet
 from elections.views import ElectionsViewSet
 # from boards.views import BoardsViewSet, SingleBoardViewSet, SingleVerificationViewSet, MultiVerificationViewSet 
+from drf_yasg.views import get_schema_view
+from drf_yasg import openapi
 
 router = routers.DefaultRouter()
 router.register(r'candidates_terms', CandidatesTermsViewSet)
@@ -29,7 +31,24 @@ router.register(r'elections', ElectionsViewSet)
 # router.register(r'board', SingleBoardViewSet)
 # router.register(r'verify/board', SingleVerificationViewSet)
 # router.register(r'verify/boards', MultiVerificationViewSet)
+
+schema_view = get_schema_view(
+   openapi.Info(
+      title="Election Boards API",
+      default_version='v2',
+      description="Test description",
+      terms_of_service="https://www.google.com/policies/terms/",
+      contact=openapi.Contact(email="contact@snippets.local"),
+      license=openapi.License(name="BSD License"),
+   ),
+   validators=['flex', 'ssv'],
+   public=True,
+   permission_classes=(),
+)
+
+
 urlpatterns = [
     re_path(r'^api/', include(router.urls)),
-    re_path(r'^api/', include('boards.urls'))
+    re_path(r'^api/', include('boards.urls')),
+    re_path(r'^api/docs/$', schema_view.with_ui('swagger', cache_timeout=0), name='schema-swagger-ui'),
 ]
