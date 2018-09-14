@@ -27,7 +27,7 @@ class BoardsGetSerializer(serializers.ModelSerializer):
         location = instance.coordinates
         ret = super(BoardsGetSerializer, self).to_representation(instance)
         del ret['coordinates']
-        ret['coordinates'] = '({},{})'.format(location[0],location[1])
+        ret['coordinates'] = '({} {})'.format(location[0],location[1])
         return ret
 
 class BoardsPostSerializer(serializers.ModelSerializer):
@@ -57,7 +57,7 @@ class BoardsPostSerializer(serializers.ModelSerializer):
         location = instance.coordinates
         ret = super(BoardsPostSerializer, self).to_representation(instance)
         del ret['coordinates']
-        ret['coordinates'] = '({},{})'.format(location[0],location[1])
+        ret['coordinates'] = '({} {})'.format(location[0],location[1])
         return ret
 
 class CheckBoardDeserializer(serializers.ModelSerializer):
