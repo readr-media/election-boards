@@ -25,7 +25,7 @@ class CandidatesTermsSerializer(serializers.HyperlinkedModelSerializer):
     boards = SingleBoardSerializer(many=True)
     class Meta:
         model = Terms
-        fields = ('uid', 'election_year', 'type', 'county', 'district', 'name', 'party', 'number', 'image','boards','constituency')
+        fields = ('id','uid', 'election_year', 'type', 'county', 'district', 'name', 'party', 'number', 'image','boards','constituency')
     
     def to_representation(self, instance):
         ret = super(CandidatesTermsSerializer, self).to_representation(instance)

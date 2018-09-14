@@ -7,7 +7,7 @@ from candidates.models import Terms
 # Create your models here.
 class Boards(models.Model):
 
-    image = models.URLField(null=False, blank=False)
+    image = models.CharField(max_length=256,null=False, blank=False)
     coordinates = models.PointField(null=False)
     
     county = models.CharField(max_length=15, blank=True)
@@ -18,7 +18,7 @@ class Boards(models.Model):
 
     took_at = models.DateTimeField(null=True)
     uploaded_at = models.DateTimeField(null=True, auto_now_add=True)
-    uploaded_by = models.UUIDField(unique=True, default=uuid.uuid4, editable=False, blank=False, null=False)
+    uploaded_by = models.UUIDField(editable=False, blank=False, null=False)
 
     has_price_info = models.BooleanField(default=False)
     has_receipt_inof = models.BooleanField(default=False)

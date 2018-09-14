@@ -1,7 +1,15 @@
 from rest_framework import serializers
 from .models import Boards, Checks
 from candidates.models import Candidates, Terms
+from datetime import datetime
 
+class TimestampField(serializers.DateTimeField): 
+    
+    def to_internal_value(self, value):
+        converted_time = datetime.fromtimestamp(float(value))
+        print(converted_time)
+        return super(TimestampField, self).to_internal_value(converted_time)
+        
 class BoardsTermsSerializer(serializers.HyperlinkedModelSerializer):
     class Meta:
         model = Terms
@@ -24,6 +32,8 @@ class BoardsGetSerializer(serializers.ModelSerializer):
 
 class BoardsPostSerializer(serializers.ModelSerializer):
     candidates = serializers.PrimaryKeyRelatedField(many=True, queryset=Terms.objects.all())
+    took_at = TimestampField()
+    uploaded_by = serializers.UUIDField(format='hex_verbose')
 
     class Meta:
         model = Boards
