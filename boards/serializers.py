@@ -7,7 +7,6 @@ class TimestampField(serializers.DateTimeField):
     
     def to_internal_value(self, value):
         converted_time = datetime.fromtimestamp(float(value))
-        print(converted_time)
         return super(TimestampField, self).to_internal_value(converted_time)
         
 class BoardsTermsSerializer(serializers.HyperlinkedModelSerializer):

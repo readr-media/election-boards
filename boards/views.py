@@ -1,6 +1,6 @@
 from rest_framework import viewsets, mixins, views, response, status
 from .models import Boards, Checks
-from .serializers import BoardsGetSerializer, BoardsPostSerializer, CheckBoardDeserializer 
+from .serializers import BoardsGetSerializer, BoardsPostSerializer, CheckBoardDeserializer
 from drf_yasg.utils import swagger_auto_schema
 
 class BoardsList(views.APIView):
@@ -39,21 +39,3 @@ class CheckBoardView(views.APIView):
             serializer.save()
             return response.Response(serializer.data, status=status.HTTP_201_CREATED)
         return response.Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
-
-################### ViewSet implementation. Deprecated. ####################
-# Create your views here.
-class BoardsViewSet(mixins.ListModelMixin, viewsets.GenericViewSet):
-    queryset = Boards.objects.all()
-    serializer_class = BoardsGetSerializer
-    permission_classes = []
-
-class SingleBoardViewSet(mixins.RetrieveModelMixin, mixins.CreateModelMixin, viewsets.GenericViewSet):
-    queryset = Boards.objects.all()
-    permission_classes = []
-
-    def get_serializer_class(self):
-        if self.action == 'retrieve':
-            return BoardsGetSerializer
-        elif self.action == 'create':
-            return BoardsPostSerializer
-        return BoardsGetSerializer
