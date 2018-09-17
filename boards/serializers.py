@@ -2,6 +2,8 @@ from rest_framework import serializers
 from .models import Boards, Checks
 from candidates.models import Candidates, Terms
 from datetime import datetime
+from django.contrib.gis.geos import Point
+import re
 
 class TimestampField(serializers.DateTimeField): 
     
@@ -9,30 +11,33 @@ class TimestampField(serializers.DateTimeField):
         converted_time = datetime.fromtimestamp(float(value))
         return super(TimestampField, self).to_internal_value(converted_time)
         
+class CoordinatesField(serializers.Field):
+    
+    def to_internal_value(self, data):
+        m = re.match(r'\((?P<lat>[0-9\.]+)\s+(?P<lon>[0-9\.]+)\)', data)
+        return Point(float(m.group('lat')), float(m.group('lon')))
+
+    def to_representation(self, obj):
+        return '({} {})'.format(obj[0],obj[1])
+
 class BoardsTermsSerializer(serializers.HyperlinkedModelSerializer):
     class Meta:
         model = Terms
         fields = ('uid', 'election_year', 'type', 'county', 'district', 'name', 'party', 'number', 'image')
 
-
 class BoardsGetSerializer(serializers.ModelSerializer):
     candidates = BoardsTermsSerializer(many=True,read_only=True)
-    
+    coordinates = CoordinatesField()
+
     class Meta:
         model = Boards
         fields = '__all__'
     
-    def to_representation(self, instance):
-        location = instance.coordinates
-        ret = super(BoardsGetSerializer, self).to_representation(instance)
-        del ret['coordinates']
-        ret['coordinates'] = '({} {})'.format(location[0],location[1])
-        return ret
-
 class BoardsPostSerializer(serializers.ModelSerializer):
     candidates = serializers.PrimaryKeyRelatedField(many=True, queryset=Terms.objects.all())
     took_at = TimestampField()
     uploaded_by = serializers.UUIDField(format='hex_verbose')
+    coordinates = CoordinatesField()
 
     class Meta:
         model = Boards
@@ -47,17 +52,6 @@ class BoardsPostSerializer(serializers.ModelSerializer):
         for candidate in board_candidates:
             board.candidates.add(candidate)
         return board
-    
-    def to_internal_value(self, data):
-        data['coordinates'] = "SRID=4326;POINT " + data['coordinates']
-        return super(BoardsPostSerializer, self).to_internal_value(data)
-
-    def to_representation(self, instance):
-        location = instance.coordinates
-        ret = super(BoardsPostSerializer, self).to_representation(instance)
-        del ret['coordinates']
-        ret['coordinates'] = '({} {})'.format(location[0],location[1])
-        return ret
 
 class CheckBoardDeserializer(serializers.ModelSerializer):
 
