@@ -1,24 +1,31 @@
-from rest_framework import viewsets, mixins, views, response, status
+from rest_framework import viewsets, views, response, status
 from .models import Boards, Checks
 from .serializers import BoardsGetSerializer, BoardsPostSerializer, CheckBoardDeserializer
 from drf_yasg.utils import swagger_auto_schema
+from rest_framework.pagination import PageNumberPagination
 
-class BoardsList(views.APIView):
+class BoardsPagination(PageNumberPagination):
+    """
+    BoardsPagination is used to override default pagination settings for boards.
+    Included:
+    max_results - url query paramteters to adjust return amounts of board results 
+    page - default pagination query parameters
+    """
+    page_size = 20
+    page_size_query_param = 'max_results'
+    max_page_size = 30
+
+class BoardsView(viewsets.ModelViewSet):
+    queryset = Boards.objects.all()
     permission_classes = []
+    pagination_class = BoardsPagination 
 
-    @swagger_auto_schema(responses={200: BoardsGetSerializer(many=True)})
-    def get(self, request, format=None):
-        boards = Boards.objects.all()
-        serializer = BoardsGetSerializer(boards, many=True) 
-        return response.Response(serializer.data)
-
-    @swagger_auto_schema(query_serializer=BoardsPostSerializer, responses={201:BoardsPostSerializer})
-    def post(self, request, format=None):
-        serializer = BoardsPostSerializer(data=request.data) 
-        if serializer.is_valid():
-            serializer.save()
-            return response.Response(serializer.data, status=status.HTTP_201_CREATED)
-        return response.Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+    def get_serializer_class(self):
+        if self.action == 'list':
+            return BoardsGetSerializer
+        elif self.action == 'create':
+            return BoardsPostSerializer
+        return BoardsGetSerializer
 
 class CheckBoardView(views.APIView):
     permission_classes = []
