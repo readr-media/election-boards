@@ -1,8 +1,10 @@
-from rest_framework import viewsets, views, response, status
+from rest_framework import viewsets, views, response, status, mixins
 from .models import Boards, Checks
 from .serializers import BoardsGetSerializer, BoardsPostSerializer, CheckBoardDeserializer
-from drf_yasg.utils import swagger_auto_schema
 from rest_framework.pagination import PageNumberPagination
+from .filters import BoardsFilter
+from drf_yasg.utils import swagger_auto_schema
+from drf_yasg import openapi
 
 class BoardsPagination(PageNumberPagination):
     """
@@ -19,6 +21,7 @@ class BoardsView(viewsets.ModelViewSet):
     queryset = Boards.objects.all()
     permission_classes = []
     pagination_class = BoardsPagination 
+    filter_class = BoardsFilter 
 
     def get_serializer_class(self):
         if self.action == 'list':
@@ -27,22 +30,32 @@ class BoardsView(viewsets.ModelViewSet):
             return BoardsPostSerializer
         return BoardsGetSerializer
 
-class CheckBoardView(views.APIView):
-    permission_classes = []
+# class CheckView(viewsets.ModelViewSet):
+class CheckView(mixins.CreateModelMixin,
+                mixins.ListModelMixin,
+                viewsets.GenericViewSet):
 
-    # Return single board with minimum verified_amount, uploaded earliest
-    # And rule out specific user by using ?user=[UUID]
-    @swagger_auto_schema(responses={200: BoardsGetSerializer})
-    def get(self, request):
-        user = request.query_params.get('user', None)
-        board = Boards.objects.exclude(uploaded_by=user).order_by('verified_amount', 'uploaded_at')[0]
-        serializer = BoardsGetSerializer(board)
-        return response.Response(serializer.data)
+    queryset = Boards.objects.order_by('verified_amount', 'uploaded_at')
+    permission_classes = []
+    pagination_class = None
     
-    @swagger_auto_schema(query_serializer=CheckBoardDeserializer, responses={201:CheckBoardDeserializer})
-    def post(self, request):
-        serializer = CheckBoardDeserializer(data=request.data)
-        if serializer.is_valid():
-            serializer.save()
-            return response.Response(serializer.data, status=status.HTTP_201_CREATED)
-        return response.Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+    @swagger_auto_schema(manual_parameters=[openapi.Parameter('uploaded_by', openapi.IN_QUERY, description="exclude boards uploaded by user[uuid]", type=openapi.TYPE_STRING)])
+    def list(self, request):
+        queryset = self.get_queryset()
+        serializer = self.get_serializer(queryset)
+        return response.Response(serializer.data)
+
+    def get_queryset(self):
+        if self.action == 'list':
+            user = self.request.query_params.get('uploaded_by', None)
+            if user is not None:
+                return Boards.objects.exclude(uploaded_by=user).order_by('verified_amount', 'uploaded_at')[0]
+            return Boards.objects.order_by('verified_amount', 'uploaded_at')[0]
+
+    def get_serializer_class(self):
+        if self.action == 'list':
+            return BoardsGetSerializer
+        elif self.action == 'create':
+            return CheckBoardDeserializer
+        return BoardsGetSerializer
+
