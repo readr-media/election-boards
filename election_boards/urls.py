@@ -30,10 +30,10 @@ router.register(r'elections', ElectionsViewSet)
 schema_view = get_schema_view(
    openapi.Info(
       title="Election Boards API",
-      default_version='v2',
-      description="Test description",
+      default_version='v1.4',
+      description="Documents for election boards project",
       terms_of_service="https://www.google.com/policies/terms/",
-      contact=openapi.Contact(email="contact@snippets.local"),
+      contact=openapi.Contact(email="ichiaohsu@mirrormedia.mg"),
       license=openapi.License(name="BSD License"),
    ),
    validators=['flex', 'ssv'],

@@ -57,7 +57,8 @@ class CheckBoardDeserializer(serializers.ModelSerializer):
 
     board = serializers.PrimaryKeyRelatedField(queryset=Boards.objects.all())
     candidates = serializers.PrimaryKeyRelatedField(many=True, queryset=Terms.objects.all())
-
+    created_by = serializers.UUIDField(format='hex_verbose')
+    
     class Meta:
         model = Checks
         fields = '__all__'

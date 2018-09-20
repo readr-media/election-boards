@@ -37,4 +37,4 @@ class Checks(models.Model):
     candidates = models.ManyToManyField(Terms, related_name='check_candidates')
     slogan = models.CharField(max_length=128)
     is_board = models.BooleanField(default=False)
-    created_by = models.UUIDField(default=uuid.uuid4, editable=False, blank=False, null=False)
+    created_by = models.UUIDField(editable=False, blank=False, null=False)
