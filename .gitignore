@@ -1,4 +1,7 @@
 __pycache__
+election_boards/settings/dev.py
 election_boards/settings/production.py
+dumps
+*.dump
 # */migrations
 # migrations/*
