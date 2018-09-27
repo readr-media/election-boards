@@ -32,7 +32,12 @@ class Boards(models.Model):
 class Checks(models.Model):
 
     board = models.ForeignKey(Boards, related_name='board_checks', on_delete=models.CASCADE)
-    candidates = models.ManyToManyField(Terms, related_name='check_candidates', blank=True)
+    candidates = models.ManyToManyField(Terms, related_name='check_candidates')
     slogan = models.CharField(max_length=128, null=True)
-    is_board = models.BooleanField(default=False, blank=False)
+    is_board = models.BooleanField(default=False, null=False)
+    type = models.IntegerField(null=False, default=0)
     created_by = models.UUIDField(editable=False, blank=False, null=False)
+
+    created_at = models.DateTimeField(null=False, auto_now_add=True)
+
+
