@@ -1,12 +1,13 @@
 from rest_framework import viewsets, views, response, status, mixins
 from .models import Boards, Checks
-from .serializers import BoardsGetSerializer, BoardsPostSerializer, CheckBoardDeserializer
+from .serializers import BoardsGetSerializer, BoardsPostSerializer, CheckBoardDeserializer, CheckMultiBoardsDeserializer
 from rest_framework.pagination import PageNumberPagination
 from .filters import BoardsFilter
 from drf_yasg.utils import swagger_auto_schema
 from drf_yasg import openapi
 
 class BoardsPagination(PageNumberPagination):
+    permission_classes = []
     """
     BoardsPagination is used to override default pagination settings for boards.
     Included:
@@ -66,3 +67,6 @@ class CheckView(mixins.CreateModelMixin,
             return CheckBoardDeserializer
         return BoardsGetSerializer
 
+class CheckBoardsViewSet(mixins.CreateModelMixin, viewsets.GenericViewSet):
+    permission_classes = []
+    serializer_class = CheckMultiBoardsDeserializer
