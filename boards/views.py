@@ -23,6 +23,13 @@ class BoardsView(viewsets.ModelViewSet):
     pagination_class = BoardsPagination 
     filter_class = BoardsFilter 
 
+    @swagger_auto_schema(manual_parameters=[
+        openapi.Parameter('coordinates', openapi.IN_QUERY, description="Coordinates format in (latitude lontitude)", type=openapi.TYPE_STRING),
+        openapi.Parameter('radius', openapi.IN_QUERY, description="Radius from coordinates, default to 100m", type=openapi.TYPE_INTEGER),
+        openapi.Parameter('uploaded_by', openapi.IN_QUERY, description="exclude boards uploaded by this user", type=openapi.TYPE_STRING)])
+    def list(self, request):
+        return super(BoardsView, self).list(request)
+
     def get_serializer_class(self):
         if self.action == 'list':
             return BoardsGetSerializer
