@@ -7,6 +7,7 @@ from django.contrib.gis.measure import D
 
 class BoardsFilter(filters.FilterSet):
     uploaded_by = filters.UUIDFilter(field_name='uploaded_by', lookup_expr='exact')
+    verified_amount = filters.NumberFilter(field_name='verified_amount', lookup_expr='gte')
     coordinates = filters.CharFilter(method='filter_coordinates')
 
     def filter_coordinates(self, qs, name, value):
@@ -22,7 +23,7 @@ class BoardsFilter(filters.FilterSet):
         
     class Meta:
         model = Boards
-        fields = ('uploaded_by','coordinates')
+        fields = ('uploaded_by','coordinates', 'verified_amount')
 
 class SingleCheckFilter(filters.FilterSet):
     uploaded_by = filters.UUIDFilter(field_name='uploaded_by', lookup_expr='exact', exclude=True)
