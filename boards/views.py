@@ -6,6 +6,8 @@ from .filters import BoardsFilter, SingleCheckFilter
 from drf_yasg.utils import swagger_auto_schema
 from drf_yasg import openapi
 
+from django.db.models import Max
+
 class BoardsPagination(PageNumberPagination):
     permission_classes = []
     """
@@ -64,6 +66,12 @@ class CheckView(mixins.CreateModelMixin,
             serializer = self.get_serializer(queryset[0])
         return response.Response(serializer.data)
 
+    def get_queryset(self):
+        qs = Boards.objects.order_by('verified_amount', 'uploaded_at')
+        if self.action == 'list' or self.action == 'retrieve':
+            qs = Boards.objects.annotate(slogan=Max('board_checks__slogan')).order_by('verified_amount', 'uploaded_at')
+        return qs
+            
     def get_serializer_class(self):
         if self.action == 'create':
             return CheckBoardDeserializer

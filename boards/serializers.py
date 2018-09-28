@@ -114,9 +114,8 @@ class CheckMultiBoardsDeserializer(serializers.Serializer):
 
 class GetSingleCheckBoardSerializer(serializers.ModelSerializer):
 
-    # slogan = serializers.CharField()
+    slogan = serializers.CharField()
 
     class Meta:
         model = Boards
-        fields = ('id', 'candidates', 'image', 'verified_amount', 'uploaded_by')
-    
+        fields = ('id', 'candidates', 'image', 'verified_amount', 'uploaded_by', 'slogan')
