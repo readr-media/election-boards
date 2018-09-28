@@ -111,4 +111,12 @@ class CheckMultiBoardsDeserializer(serializers.Serializer):
                 check.save()
 
         return validated_data
+
+class GetSingleCheckBoardSerializer(serializers.ModelSerializer):
+
+    # slogan = serializers.CharField()
+
+    class Meta:
+        model = Boards
+        fields = ('id', 'candidates', 'image', 'verified_amount', 'uploaded_by')
     

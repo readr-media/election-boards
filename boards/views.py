@@ -1,8 +1,8 @@
 from rest_framework import viewsets, views, response, status, mixins
 from .models import Boards, Checks
-from .serializers import BoardsGetSerializer, BoardsPostSerializer, CheckBoardDeserializer, CheckMultiBoardsDeserializer
+from .serializers import BoardsGetSerializer, BoardsPostSerializer, CheckBoardDeserializer, CheckMultiBoardsDeserializer, GetSingleCheckBoardSerializer
 from rest_framework.pagination import PageNumberPagination
-from .filters import BoardsFilter
+from .filters import BoardsFilter, SingleCheckFilter
 from drf_yasg.utils import swagger_auto_schema
 from drf_yasg import openapi
 
@@ -46,23 +46,18 @@ class CheckView(mixins.CreateModelMixin,
     queryset = Boards.objects.order_by('verified_amount', 'uploaded_at')
     permission_classes = []
     pagination_class = None
-    
+    filterset_class = SingleCheckFilter
+
     @swagger_auto_schema(manual_parameters=[openapi.Parameter('uploaded_by', openapi.IN_QUERY, description="exclude boards uploaded by user[uuid]", type=openapi.TYPE_STRING)])
     def list(self, request):
-        queryset = self.get_queryset()
-        serializer = self.get_serializer(queryset)
+        queryset = self.filter_queryset(self.get_queryset())
+        # Only return a board
+        serializer = self.get_serializer(queryset[0])
         return response.Response(serializer.data)
-
-    def get_queryset(self):
-        if self.action == 'list':
-            user = self.request.query_params.get('uploaded_by', None)
-            if user is not None:
-                return Boards.objects.exclude(uploaded_by=user).order_by('verified_amount', 'uploaded_at')[0]
-            return Boards.objects.order_by('verified_amount', 'uploaded_at')[0]
 
     def get_serializer_class(self):
         if self.action == 'list':
-            return BoardsGetSerializer
+            return GetSingleCheckBoardSerializer
         elif self.action == 'create':
             return CheckBoardDeserializer
         return BoardsGetSerializer
