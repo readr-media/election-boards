@@ -41,6 +41,7 @@ class BoardsView(viewsets.ModelViewSet):
 # class CheckView(viewsets.ModelViewSet):
 class CheckView(mixins.CreateModelMixin,
                 mixins.ListModelMixin,
+                mixins.RetrieveModelMixin,
                 viewsets.GenericViewSet):
 
     queryset = Boards.objects.order_by('verified_amount', 'uploaded_at')
@@ -60,11 +61,9 @@ class CheckView(mixins.CreateModelMixin,
         return response.Response(serializer.data)
 
     def get_serializer_class(self):
-        if self.action == 'list':
-            return GetSingleCheckBoardSerializer
-        elif self.action == 'create':
+        if self.action == 'create':
             return CheckBoardDeserializer
-        return BoardsGetSerializer
+        return GetSingleCheckBoardSerializer
 
 class CheckBoardsViewSet(mixins.CreateModelMixin, viewsets.GenericViewSet):
     permission_classes = []
