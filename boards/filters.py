@@ -28,7 +28,7 @@ class BoardsFilter(filters.FilterSet):
         if not value:
             return qs
         
-        return qs.annotate(not_board_amount=Count('board_checks', filter=Q(board_checks__type=2, board_checks__is_board=True))).filter(not_board_amount__lte=value)
+        return qs.annotate(not_board_amount=Count('board_checks', filter=Q(board_checks__type=2, board_checks__is_board=False))).filter(not_board_amount__lte=value)
 
     class Meta:
         model = Boards
