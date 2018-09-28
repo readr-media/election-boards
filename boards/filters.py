@@ -23,3 +23,10 @@ class BoardsFilter(filters.FilterSet):
     class Meta:
         model = Boards
         fields = ('uploaded_by','coordinates')
+
+class SingleCheckFilter(filters.FilterSet):
+    uploaded_by = filters.UUIDFilter(field_name='uploaded_by', lookup_expr='exact', exclude=True)
+
+    class Meta:
+        model = Boards
+        fields = ('uploaded_by',)
