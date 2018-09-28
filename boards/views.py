@@ -27,8 +27,9 @@ class BoardsView(viewsets.ModelViewSet):
     @swagger_auto_schema(manual_parameters=[
         openapi.Parameter('coordinates', openapi.IN_QUERY, description="Coordinates format in (latitude lontitude)", type=openapi.TYPE_STRING),
         openapi.Parameter('radius', openapi.IN_QUERY, description="Radius from coordinates, default to 100m", type=openapi.TYPE_INTEGER),
-        openapi.Parameter('uploaded_by', openapi.IN_QUERY, description="exclude boards uploaded by this user", type=openapi.TYPE_STRING),
-        openapi.Parameter('verified_amount', openapi.IN_QUERY, description="return boards with verified_amount greater than this", type=openapi.TYPE_INTEGER)])
+        openapi.Parameter('uploaded_by', openapi.IN_QUERY, description="Exclude boards uploaded by this user", type=openapi.TYPE_STRING),
+        openapi.Parameter('verified_amount', openapi.IN_QUERY, description="Return boards with verified_amount >= [verified_amount]", type=openapi.TYPE_INTEGER),
+        openapi.Parameter('not_board_amount', openapi.IN_QUERY, description="Return boards which is evaluated as not board <= [not_board_amount]", type=openapi.TYPE_INTEGER)])
     def list(self, request):
         return super(BoardsView, self).list(request)
 
