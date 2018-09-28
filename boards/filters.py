@@ -26,7 +26,8 @@ class BoardsFilter(filters.FilterSet):
 
 class SingleCheckFilter(filters.FilterSet):
     uploaded_by = filters.UUIDFilter(field_name='uploaded_by', lookup_expr='exact', exclude=True)
+    skip_board = filters.NumberFilter(field_name='id', lookup_expr='gt')
 
     class Meta:
         model = Boards
-        fields = ('uploaded_by',)
+        fields = ('uploaded_by','skip_board')

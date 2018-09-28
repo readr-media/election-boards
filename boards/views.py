@@ -51,8 +51,12 @@ class CheckView(mixins.CreateModelMixin,
     @swagger_auto_schema(manual_parameters=[openapi.Parameter('uploaded_by', openapi.IN_QUERY, description="exclude boards uploaded by user[uuid]", type=openapi.TYPE_STRING)])
     def list(self, request):
         queryset = self.filter_queryset(self.get_queryset())
-        # Only return a board
-        serializer = self.get_serializer(queryset[0])
+        # If nothing selected(reach the end), sql query again and start from beginning
+        if queryset.count() == 0:
+            serializer = self.get_serializer(self.get_queryset()[0])
+        else:
+            # only return the first one
+            serializer = self.get_serializer(queryset[0])
         return response.Response(serializer.data)
 
     def get_serializer_class(self):
