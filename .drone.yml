@@ -106,4 +106,4 @@ pipeline:
         Check on our <https://www.readr.tw|site>
       {{else}}
         Houston, we have a problem. Build <${DRONE_BUILD_LINK}|#{{build.number}}> failed. Fix me please, {{build.author}}
-      {{/success}
+      {{/success}}
