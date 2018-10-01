@@ -68,8 +68,8 @@ class CheckBoardDeserializer(serializers.ModelSerializer):
         check_candidates = [] 
         if 'candidates' in validated_data:
             check_candidates = validated_data.pop('candidates')
-            if len(check_candidates) <= 0:
-                raise serializers.ValidationError("candidats field presented but its length is 0")
+            # if len(check_candidates) <= 0:
+            #     raise serializers.ValidationError("candidats field presented but its length is 0")
         validated_data['type'] = 1
         check = Checks.objects.create(**validated_data)
 
@@ -115,6 +115,7 @@ class CheckMultiBoardsDeserializer(serializers.Serializer):
 class GetSingleCheckBoardSerializer(serializers.ModelSerializer):
 
     slogan = serializers.CharField()
+    candidates = BoardsTermsSerializer(many=True,read_only=True)
 
     class Meta:
         model = Boards
