@@ -1,5 +1,6 @@
 from django_filters import rest_framework as filters
 from .models import Boards
+from candidates.models import Terms
 import re
 from django.contrib.gis.geos import Point
 from django.contrib.gis.db.models.functions import Distance
@@ -12,6 +13,7 @@ class BoardsFilter(filters.FilterSet):
     verified_amount = filters.NumberFilter(field_name='verified_amount', lookup_expr='gte')
     not_board_amount = filters.NumberFilter(method='filter_not_board_amount')
     coordinates = filters.CharFilter(method='filter_coordinates')
+    candidates = filters.ModelChoiceFilter(queryset=Terms.objects.all())
 
     def filter_coordinates(self, qs, name, value):
         if not value:
@@ -32,7 +34,7 @@ class BoardsFilter(filters.FilterSet):
 
     class Meta:
         model = Boards
-        fields = ('uploaded_by','coordinates', 'verified_amount', 'not_board_amount')
+        fields = ('uploaded_by','coordinates', 'verified_amount', 'not_board_amount', 'candidates')
 
 class SingleCheckFilter(filters.FilterSet):
     uploaded_by = filters.UUIDFilter(field_name='uploaded_by', lookup_expr='exact', exclude=True)
