@@ -30,6 +30,7 @@ INSTALLED_APPS = [
     'councilors',
     'candidates',
     'boards',
+    'app',
     'rest_framework',
     'django_filters',
     'drf_yasg',

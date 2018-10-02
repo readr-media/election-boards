@@ -1,29 +1,18 @@
 from rest_framework import viewsets, views, response, status, mixins
 from .models import Boards, Checks
-from .serializers import BoardsGetSerializer, BoardsPostSerializer, CheckBoardDeserializer, CheckMultiBoardsDeserializer, GetSingleCheckBoardSerializer
-from rest_framework.pagination import PageNumberPagination
+from .serializers import MultiBoardsSerializer, MultiBoardsDeserializer, SingleCheckDeserializer, MultiChecksDeserializer, SingleCheckSerializer
 from .filters import BoardsFilter, SingleCheckFilter
+from app.filters import MaxResults
+
 from drf_yasg.utils import swagger_auto_schema
 from drf_yasg import openapi
 
 from django.db.models import Max
 
-class BoardsPagination(PageNumberPagination):
-    permission_classes = []
-    """
-    BoardsPagination is used to override default pagination settings for boards.
-    Included:
-    max_results - url query paramteters to adjust return amounts of board results 
-    page - default pagination query parameters
-    """
-    page_size = 20
-    page_size_query_param = 'max_results'
-    max_page_size = 30
-
-class BoardsView(viewsets.ModelViewSet):
+class MultiBoardsViewSet(viewsets.ModelViewSet):
     queryset = Boards.objects.all()
     permission_classes = []
-    pagination_class = BoardsPagination 
+    pagination_class = MaxResults 
     filter_class = BoardsFilter 
 
     @swagger_auto_schema(manual_parameters=[
@@ -33,17 +22,17 @@ class BoardsView(viewsets.ModelViewSet):
         openapi.Parameter('verified_amount', openapi.IN_QUERY, description="Return boards with verified_amount >= [verified_amount]", type=openapi.TYPE_INTEGER),
         openapi.Parameter('not_board_amount', openapi.IN_QUERY, description="Return boards which is evaluated as not board <= [not_board_amount]", type=openapi.TYPE_INTEGER)])
     def list(self, request):
-        return super(BoardsView, self).list(request)
+        return super(MultiBoardsViewSet, self).list(request)
 
     def get_serializer_class(self):
         if self.action == 'list':
-            return BoardsGetSerializer
+            return MultiBoardsSerializer
         elif self.action == 'create':
-            return BoardsPostSerializer
-        return BoardsGetSerializer
+            return MultiBoardsDeserializer
+        return MultiBoardsSerializer
 
-# class CheckView(viewsets.ModelViewSet):
-class CheckView(mixins.CreateModelMixin,
+# class SingleCheckViewSet(viewsets.ModelViewSet):
+class SingleCheckViewSet(mixins.CreateModelMixin,
                 mixins.ListModelMixin,
                 mixins.RetrieveModelMixin,
                 viewsets.GenericViewSet):
@@ -74,9 +63,9 @@ class CheckView(mixins.CreateModelMixin,
             
     def get_serializer_class(self):
         if self.action == 'create':
-            return CheckBoardDeserializer
-        return GetSingleCheckBoardSerializer
+            return SingleCheckDeserializer
+        return SingleCheckSerializer
 
-class CheckBoardsViewSet(mixins.CreateModelMixin, viewsets.GenericViewSet):
+class MultiChecksViewSet(mixins.CreateModelMixin, viewsets.GenericViewSet):
     permission_classes = []
-    serializer_class = CheckMultiBoardsDeserializer
+    serializer_class = MultiChecksDeserializer
