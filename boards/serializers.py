@@ -25,7 +25,7 @@ class BoardsTermsSerializer(serializers.HyperlinkedModelSerializer):
         model = Terms
         fields = ('uid', 'election_year', 'type', 'county', 'district', 'name', 'party', 'number', 'image')
 
-class BoardsGetSerializer(serializers.ModelSerializer):
+class MultiBoardsSerializer(serializers.ModelSerializer):
     candidates = BoardsTermsSerializer(many=True,read_only=True)
     coordinates = CoordinatesField()
 
@@ -33,7 +33,7 @@ class BoardsGetSerializer(serializers.ModelSerializer):
         model = Boards
         fields = '__all__'
     
-class BoardsPostSerializer(serializers.ModelSerializer):
+class MultiBoardsDeserializer(serializers.ModelSerializer):
     candidates = serializers.PrimaryKeyRelatedField(many=True, queryset=Terms.objects.all())
     took_at = TimestampField()
     uploaded_by = serializers.UUIDField(format='hex_verbose')
@@ -53,7 +53,7 @@ class BoardsPostSerializer(serializers.ModelSerializer):
             board.candidates.add(candidate)
         return board
 
-class CheckBoardDeserializer(serializers.ModelSerializer):
+class SingleCheckDeserializer(serializers.ModelSerializer):
 
     board = serializers.PrimaryKeyRelatedField(queryset=Boards.objects.all())
     candidates = serializers.PrimaryKeyRelatedField(many=True, queryset=Terms.objects.all(), required=False)
@@ -83,7 +83,7 @@ class CheckBoardDeserializer(serializers.ModelSerializer):
         check.board.save() 
         return check
 
-class CheckMultiBoardsDeserializer(serializers.Serializer):
+class MultiChecksDeserializer(serializers.Serializer):
     is_board = serializers.ListField(
         child = serializers.PrimaryKeyRelatedField(queryset=Boards.objects.all())
     )
@@ -112,7 +112,7 @@ class CheckMultiBoardsDeserializer(serializers.Serializer):
 
         return validated_data
 
-class GetSingleCheckBoardSerializer(serializers.ModelSerializer):
+class SingleCheckSerializer(serializers.ModelSerializer):
 
     slogan = serializers.CharField()
     candidates = BoardsTermsSerializer(many=True,read_only=True)
