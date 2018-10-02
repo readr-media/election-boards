@@ -1,29 +1,18 @@
 from rest_framework import viewsets, views, response, status, mixins
 from .models import Boards, Checks
 from .serializers import MultiBoardsSerializer, MultiBoardsDeserializer, SingleCheckDeserializer, MultiChecksDeserializer, SingleCheckSerializer
-from rest_framework.pagination import PageNumberPagination
 from .filters import BoardsFilter, SingleCheckFilter
+from app.filters import MaxResults
+
 from drf_yasg.utils import swagger_auto_schema
 from drf_yasg import openapi
 
 from django.db.models import Max
 
-class BoardsPagination(PageNumberPagination):
-    permission_classes = []
-    """
-    BoardsPagination is used to override default pagination settings for boards.
-    Included:
-    max_results - url query paramteters to adjust return amounts of board results 
-    page - default pagination query parameters
-    """
-    page_size = 20
-    page_size_query_param = 'max_results'
-    max_page_size = 30
-
 class MultiBoardsViewSet(viewsets.ModelViewSet):
     queryset = Boards.objects.all()
     permission_classes = []
-    pagination_class = BoardsPagination 
+    pagination_class = MaxResults 
     filter_class = BoardsFilter 
 
     @swagger_auto_schema(manual_parameters=[
