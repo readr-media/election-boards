@@ -54,5 +54,6 @@ class Terms(models.Model):
         unique_together = ("candidate", "election_year")
         index_together = ['election_year', 'county', 'constituency']
         ordering = ['county','type','id']
+    
     def __unicode__(self):
         return self.name
