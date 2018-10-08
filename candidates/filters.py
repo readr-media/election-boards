@@ -8,6 +8,20 @@ class TermsFilter(filters.FilterSet):
     verified_amount = filters.NumberFilter(method='filter_verified_amount')
     not_board_amount = filters.NumberFilter(method='filter_not_board_amount')
 
+    def __init__(self, data=None, *args, **kwargs):
+
+        data = data.copy()
+        
+        # Set default verified_amount to 3
+        if 'verified_amount' not in data:
+            data['verified_amount'] = 3          
+        
+        # Set default not_board_amount to 2
+        if 'not_board_amount' not in data:
+            data['not_board_amount'] = 2
+
+        super(TermsFilter, self).__init__(data, *args, **kwargs)
+
     def filter_county(self, qs, name, value):
         if not value:
             return qs
@@ -16,28 +30,23 @@ class TermsFilter(filters.FilterSet):
         filter_value = [x.strip('"').strip() for x in filter_value]
         return qs.filter(**{name+'__in':filter_value})
 
-    def filter_verified_amount(self, qs, name, verified_amount):
-        if not verified_amount:
-            return qs
-
-        not_board_amount = self.request.query_params.get('not_board_amount', None)
-        if not_board_amount is None:
-            not_board_amount = 2
-        boards = Boards.objects.annotate(not_board_amount=Count('board_checks', filter=Q(board_checks__type=2, board_checks__is_board=False))).filter(not_board_amount__lte=not_board_amount).order_by('-uploaded_at') 
-        qs = Terms.objects.select_related('candidate') \
-            .prefetch_related(Prefetch('boards', queryset=boards)) \
-            .annotate(verified_board_amount=Count('boards', filter=Q(boards__verified_amount__gte=verified_amount)))
-
     def filter_not_board_amount(self, qs, name, not_board_amount):
-        if not not_board_amount:
-            return qs
 
-        verified_amount = self.request.query_params.get('verified_amount', None)
-        if verified_amount is None:
-            verified_amount = 3
-        return Terms.objects.select_related('candidate') \
-            .prefetch_related(Prefetch('boards', queryset=Boards.objects.annotate(not_board_amount=Count('board_checks', filter=Q(board_checks__type=2, board_checks__is_board=False))).filter(not_board_amount__lte=not_board_amount).order_by('-uploaded_at'))) \
-            .annotate(verified_board_amount=Count('boards', filter=Q(boards__verified_amount__gte=verified_amount)))
+        return qs.prefetch_related(Prefetch('boards', queryset=Boards.objects.annotate(not_board_amount=Count('board_checks', filter=Q(board_checks__type=2, board_checks__is_board=False))).filter(not_board_amount__lte=not_board_amount).order_by('-uploaded_at')))
+
+    def filter_verified_amount(self, qs, name, verified_amount):
+
+        try:
+            qs = qs.annotate(verified_board_amount=Count('boards', filter=Q(boards__verified_amount__gte=verified_amount)))
+        except:
+            print('not_board_amount not set yet')
+            not_board_amount = self.data.pop('not_board_amount')
+            qs = self.filter_not_board_amount(qs, 'not_board_amount', not_board_amount)
+        qs = qs.annotate(verified_board_amount=Count('boards', filter=Q(boards__verified_amount__gte=verified_amount)))
+
+        return qs
+            
+
 
     class Meta:
         model = Terms
