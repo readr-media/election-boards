@@ -3,6 +3,7 @@ from .models import Boards, Checks
 from candidates.models import Candidates, Terms
 from datetime import datetime
 from django.contrib.gis.geos import Point
+from django.db.models import Max, Count
 import re
 
 class TimestampField(serializers.DateTimeField): 
@@ -81,6 +82,25 @@ class SingleCheckDeserializer(serializers.ModelSerializer):
         # Update verified_amount in board table
         check.board.verified_amount += 1
         check.board.save() 
+       
+        # Select most headcount number 'headcount_max'
+        headcount_max = Checks.objects.filter(board=validated_data['board']).aggregate(Max('headcount'))
+        print(headcount_max)
+
+        headcount_max = headcount_max['headcount__max']
+
+        # Select 'headcount_max' most frequent candidates in check
+        most_candidates = [p['candidates__id'] for p in Checks.objects.filter(board=validated_data['board']) \
+            .values('candidates__id').annotate(hcm=Count('candidates__id')).order_by('-hcm') \
+            if p['candidates__id'] is not None and p['hcm'] != 0]
+        if len(most_candidates) > headcount_max:
+            most_candidates = most_candidates[:headcount_max]
+        # Update boards_boards_candidates to connect this boards with only most
+        # frequent candidates
+        print("validated_data",validated_data['board'])
+        validated_data['board'].candidates.clear()
+        for candidate in most_candidates:
+            validated_data['board'].candidates.add(candidate)
         return check
 
 class MultiChecksDeserializer(serializers.Serializer):
@@ -119,4 +139,5 @@ class SingleCheckSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Boards
-        fields = ('id', 'candidates', 'image', 'verified_amount', 'uploaded_by', 'slogan')
+        fields = ('id', 'candidates', 'image', 'verified_amount',
+                  'uploaded_by', 'slogan')

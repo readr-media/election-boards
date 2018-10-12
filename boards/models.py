@@ -7,7 +7,7 @@ from candidates.models import Terms
 # Create your models here.
 class Boards(models.Model):
 
-    image = models.CharField(max_length=256,null=False, blank=False)
+    image = models.CharField(max_length=256, null=False, blank=False)
     coordinates = models.PointField(null=False)
     
     county = models.CharField(max_length=15, blank=True)
@@ -39,5 +39,5 @@ class Checks(models.Model):
     created_by = models.UUIDField(editable=False, blank=False, null=False)
 
     created_at = models.DateTimeField(null=False, auto_now_add=True)
-
+    headcount = models.IntegerField(null=False, default=1)
 
