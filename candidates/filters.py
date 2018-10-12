@@ -36,15 +36,7 @@ class TermsFilter(filters.FilterSet):
 
     def filter_verified_amount(self, qs, name, verified_amount):
 
-        try:
-            qs = qs.annotate(verified_board_amount=Count('boards', filter=Q(boards__verified_amount__gte=verified_amount)))
-        except:
-            print('not_board_amount not set yet')
-            not_board_amount = self.data.pop('not_board_amount')
-            qs = self.filter_not_board_amount(qs, 'not_board_amount', not_board_amount)
-        qs = qs.annotate(verified_board_amount=Count('boards', filter=Q(boards__verified_amount__gte=verified_amount)))
-
-        return qs
+        return qs.annotate(verified_board_amount=Count('boards', filter=Q(boards__verified_amount__gte=verified_amount)))
             
 
 

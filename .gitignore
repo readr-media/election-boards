@@ -5,3 +5,5 @@ dumps
 *.dump
 # */migrations
 # migrations/*
+*.swp
+.DS_Store
