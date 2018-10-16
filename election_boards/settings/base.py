@@ -88,6 +88,10 @@ REST_FRAMEWORK = {
 }
 
 
+CELERY_TIMEZONE = 'Asia/Taipei'
+CELERY_ACCEPT_CONTENT = ['application/json']
+CELERY_TASK_SERIALIZER = 'json'
+CELERY_IMPORTS = ('app.tasks', )
 # Password validation
 # https://docs.djangoproject.com/en/2.1/ref/settings/#auth-password-validators
 

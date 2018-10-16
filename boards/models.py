@@ -3,6 +3,7 @@ import uuid
 
 from django.contrib.gis.db import models
 from candidates.models import Terms
+from django.contrib.postgres.fields import ArrayField
 
 # Create your models here.
 class Boards(models.Model):
@@ -21,7 +22,13 @@ class Boards(models.Model):
     uploaded_by = models.UUIDField(editable=False, blank=False, null=False)
 
     has_price_info = models.BooleanField(default=False)
-    has_receipt_inof = models.BooleanField(default=False)
+    price = models.IntegerField(null=True)
+    has_receipt_info = models.BooleanField(default=False)
+    receipt = ArrayField(
+        models.CharField(max_length=256),
+        null=True,
+        default=None
+    )
 
     verified_amount = models.IntegerField(default=0)
     is_board = models.BooleanField(default=False)

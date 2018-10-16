@@ -7,3 +7,5 @@ dumps
 # migrations/*
 *.swp
 .DS_Store
+celerybeat-schedule.db
+app/gcskeyfile.json
