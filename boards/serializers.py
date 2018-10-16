@@ -85,7 +85,6 @@ class SingleCheckDeserializer(serializers.ModelSerializer):
        
         # Select most headcount number 'headcount_max'
         headcount_max = Checks.objects.filter(board=validated_data['board']).aggregate(Max('headcount'))
-        print(headcount_max)
 
         headcount_max = headcount_max['headcount__max']
 
@@ -97,7 +96,6 @@ class SingleCheckDeserializer(serializers.ModelSerializer):
             most_candidates = most_candidates[:headcount_max]
         # Update boards_boards_candidates to connect this boards with only most
         # frequent candidates
-        print("validated_data",validated_data['board'])
         validated_data['board'].candidates.clear()
         for candidate in most_candidates:
             validated_data['board'].candidates.add(candidate)
