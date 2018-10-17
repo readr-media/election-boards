@@ -4,7 +4,7 @@ workspace:
 pipeline:
   start_slack:
     image: plugins/slack
-    channel: jenkins
+    channel: ground_control
     secrets: [slack_webhook]
     username: election-boards
     icon_url: https://upload.wikimedia.org/wikipedia/commons/thumb/c/c3/Python-logo-notext.svg/240px-Python-logo-notext.svg.png
@@ -94,7 +94,7 @@ pipeline:
 
   finish_slack:
     image: plugins/slack
-    channel: jenkins
+    channel: ground_control
     secrets: [slack_webhook]
     username: electin-boards
     icon_url: https://upload.wikimedia.org/wikipedia/commons/thumb/c/c3/Python-logo-notext.svg/240px-Python-logo-notext.svg.png
