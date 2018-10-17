@@ -14,7 +14,7 @@ SPREADSHEET_ID = '19UjwwLiQ_jfpzsjG_VKlNn1b3dGoFCs3ZOR4s7yGb0I'
 RANGE_NAME = '表單回應 1!A:K'
 
 @periodic_task(
-    run_every=(crontab(minute='*/1')),
+    run_every=(crontab(hour='*/6')),
     name='app.tasks.check_spreadsheet',
     ignore_result=True,
 )
