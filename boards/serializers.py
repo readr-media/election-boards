@@ -65,7 +65,7 @@ class SingleCheckDeserializer(serializers.ModelSerializer):
     candidates = serializers.PrimaryKeyRelatedField(many=True, queryset=Terms.objects.all(), required=False)
     created_by = serializers.UUIDField(format='hex_verbose')
     is_board = serializers.BooleanField(required=True)
-
+    is_original = serializers.NullBooleanField()
     class Meta:
         model = Checks
         fields = '__all__'
