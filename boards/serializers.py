@@ -49,7 +49,7 @@ class MultiBoardsDeserializer(serializers.ModelSerializer):
         board_candidates = validated_data.pop('candidates')
         board = Boards.objects.create(**validated_data)
 
-        check = Checks(board=validated_data.get('id',0), is_board=True, is_original=True, headcount=len(board_candidates), created_at = validated_data['uploaded_at'], created_by=validated_data['uploaded_by'])
+        check = Checks(board=board, is_board=True, is_original=True, headcount=len(board_candidates), created_at = board.uploaded_at, created_by=board.uploaded_by)
         check.save()
 
         # Create relationship
@@ -65,7 +65,7 @@ class SingleCheckDeserializer(serializers.ModelSerializer):
     candidates = serializers.PrimaryKeyRelatedField(many=True, queryset=Terms.objects.all(), required=False)
     created_by = serializers.UUIDField(format='hex_verbose')
     is_board = serializers.BooleanField(required=True)
-    is_original = serializers.NullBooleanField()
+    is_original = serializers.NullBooleanField(required=False)
     class Meta:
         model = Checks
         fields = '__all__'
@@ -77,6 +77,9 @@ class SingleCheckDeserializer(serializers.ModelSerializer):
             # if len(check_candidates) <= 0:
             #     raise serializers.ValidationError("candidats field presented but its length is 0")
         validated_data['type'] = 1
+        # Invalidate is_original field
+        if 'is_original' in validated_data and validated_data['is_original'] == True:
+            validated_data['is_original'] = False
         check = Checks.objects.create(**validated_data)
 
         # If there are denoted candidates, create relationship
