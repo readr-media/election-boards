@@ -36,10 +36,13 @@ def check_spreadsheet():
                 except ValueError:
                     print('board id could not be parsed')
                     continue
- 
-                board = Boards.objects.get(id=board_id)
-                print('id:{} image:{}'.format(board.id, board.image))
- 
+                try:
+                    board = Boards.objects.get(id=board_id)
+                    print('id:{} image:{}'.format(board.id, board.image))
+                except Boards.DoesNotExist:
+                    print('Board {} does not exists.'.format(board_id))
+                    continue
+
                 # Parse price
                 if row[6] is not None and row[6] != '':
                     try:
