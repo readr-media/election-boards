@@ -48,7 +48,6 @@ def check_spreadsheet():
                     try:
                         price = int(row[6])
                         print('price is:{}'.format(price))
-                        board.has_price_info = True
                         board.price = price
                     except ValueError:
                         # Situation when content couldn't convert to integer
@@ -62,7 +61,6 @@ def check_spreadsheet():
                     print('receipt list is:{}'.format(row[7]))
                     receipt = list(map(lambda x: x.strip(), row[7].split(',')))
                     print(receipt)
-                    board.has_receipt_info = True
                     board.receipt = receipt
 
                 # Update board

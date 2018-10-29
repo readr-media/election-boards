@@ -33,8 +33,6 @@ class CandidatesTermsSerializer(serializers.HyperlinkedModelSerializer):
  
     def to_representation(self, instance):
         ret = super(CandidatesTermsSerializer, self).to_representation(instance)
-        # Calculate unverified_board_amount from correct boards length and verified_board_amount
-        ret['unverified_board_amount'] = len(ret['boards']) - ret['verified_board_amount']
 
         if len(ret['boards']) > 1:
             ret['boards'] = ret['boards'][:1]

@@ -76,6 +76,7 @@ class SingleCheckDeserializer(serializers.ModelSerializer):
             check_candidates = validated_data.pop('candidates')
             # if len(check_candidates) <= 0:
             #     raise serializers.ValidationError("candidats field presented but its length is 0")
+ 
         validated_data['type'] = 1
         # Invalidate is_original field
         if 'is_original' in validated_data and validated_data['is_original'] == True:
@@ -132,14 +133,17 @@ class MultiChecksDeserializer(serializers.Serializer):
 
         if valid_boards:
             for board in valid_boards:
-                check = Checks(**{'board':board, 'is_board': True, 'created_by': created_by, 'type': 2})
+                check = Checks(**{'board':board, 'is_board': True, 'created_by': created_by, 'type': 2, 'is_original': False})
                 check.save()
 
         if invalid_boards:
             for board in invalid_boards:
-                check = Checks(**{'board':board, 'is_board': False, 'created_by': created_by, 'type': 2})
+                check = Checks(**{'board':board, 'is_board': False, 'created_by': created_by, 'type': 2, 'is_original': False})
                 check.save()
 
+                ib = Boards.objects.get(pk=board)
+                ib.not_board_amount += 1
+                ib.save()
         return validated_data
 
 class SingleCheckSerializer(serializers.ModelSerializer):
