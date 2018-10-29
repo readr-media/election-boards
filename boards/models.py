@@ -21,9 +21,7 @@ class Boards(models.Model):
     uploaded_at = models.DateTimeField(null=True, auto_now_add=True)
     uploaded_by = models.UUIDField(editable=False, blank=False, null=False)
 
-    has_price_info = models.BooleanField(default=False)
     price = models.IntegerField(null=True)
-    has_receipt_info = models.BooleanField(default=False)
     receipt = ArrayField(
         models.CharField(max_length=256),
         null=True,
@@ -31,6 +29,7 @@ class Boards(models.Model):
     )
 
     verified_amount = models.IntegerField(default=0)
+    not_board_amount = models.IntegerField(default=0)
     is_board = models.BooleanField(default=False)
 
     class Meta:
