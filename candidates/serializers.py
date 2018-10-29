@@ -30,13 +30,13 @@ class CandidatesTermsSerializer(serializers.HyperlinkedModelSerializer):
     class Meta:
         model = Terms
         fields = ('id','uid', 'election_year', 'type', 'county', 'district', 'name', 'party', 'number', 'image', 'boards', 'constituency', 'verified_board_amount', 'unverified_board_amount')
-    
+ 
     def to_representation(self, instance):
         ret = super(CandidatesTermsSerializer, self).to_representation(instance)
         # Calculate unverified_board_amount from correct boards length and verified_board_amount
         ret['unverified_board_amount'] = len(ret['boards']) - ret['verified_board_amount']
-        
+
         if len(ret['boards']) > 1:
-            ret['boards'] = ret['boards'][0]
+            ret['boards'] = ret['boards'][:1]
         return ret
 
