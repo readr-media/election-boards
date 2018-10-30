@@ -25,12 +25,12 @@ class BoardsFilter(filters.FilterSet):
         p = Point(float(m.group('lat')), float(m.group('lon')), srid=4326)
         # qs = Boards.objects.annotate(distance=Distance('coordinates', p)).filter(distance__lte=radius)
         return qs.filter(coordinates__distance_lte=(p,D(m=radius)))
-        
+ 
     def filter_not_board_amount(self, qs, name, value):
         if not value:
             return qs
-        
-        return qs.annotate(not_board_amount=Count('board_checks', filter=Q(board_checks__type=2, board_checks__is_board=False))).filter(not_board_amount__lte=value)
+ 
+        return qs.filter(not_board_amount__lte=value)
 
     class Meta:
         model = Boards

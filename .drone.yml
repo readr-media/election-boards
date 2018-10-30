@@ -21,6 +21,7 @@ pipeline:
     commands:
     - gcloud source repos clone default ../default
     - cp ../default/election-boards/dev/dev.py ./election_boards/settings/production.py
+    - cp ../default/keystone/gcskeyfile.json ./app/gcskeyfile.json
     when:
       event: [push]
       branch: dev
@@ -33,6 +34,7 @@ pipeline:
     - cp ../default/election-boards/production/production.py ./election_boards/settings/production.py
     - cp ../default/election-boards/production/uwsgi.ini ./uwsgi.ini
     - cp ../default/election-boards/production/.kube.yml ./.kube.yml
+    - cp ../default/keystone/gcskeyfile.json ./app/gcskeyfile.json
     when:
       event: [push]
       branch: master

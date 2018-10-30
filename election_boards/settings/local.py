@@ -2,7 +2,29 @@ from .base import *
 
 SECRET_KEY = 'bWFuYWdlLnB55Yiw5bqV5piv5bm55Zib55qECg=='
 DEBUG = True
+SPREADSHEET_ID = '19UjwwLiQ_jfpzsjG_VKlNn1b3dGoFCs3ZOR4s7yGb0I'
 
+LOGGING = {
+    'version': 1,
+    'filters': {
+        'require_debug_true': {
+            '()': 'django.utils.log.RequireDebugTrue',
+        }
+    },
+    'handlers': {
+        'console': {
+            'level': 'DEBUG',
+            'filters': ['require_debug_true'],
+            'class': 'logging.StreamHandler',
+        }
+    },
+    'loggers': {
+        'django.db.backends': {
+            'level': 'DEBUG',
+            'handlers':['console'],
+        },
+    },
+}
 # # Configs for local with uwsgi
 # DEBUG = False
 # ALLOWED_HOSTS = ['*']

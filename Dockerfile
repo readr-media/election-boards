@@ -8,11 +8,17 @@ WORKDIR /usr/src/app/election-boards
 ENV DJANGO_SETTINGS_MODULE election_boards.settings.production
 
 RUN apt-get update \
-    && apt-get install -y gcc gdal-bin \
+    && apt-get install -y gcc gdal-bin supervisor \
     && pip install --upgrade pip \
     && pip install -r requirements.txt \
     && mkdir -p /tmp/log/uwsgi \
-    && chown -R user:user /tmp/log/uwsgi
+    && chown -R user:user /tmp/log/uwsgi \
+    && mv supervisor.conf/*.conf /etc/supervisor/conf.d \
+    && mkdir /var/log/celery \
+    && touch /var/log/celery/board_worker.log \
+    && touch /var/log/celery/board_beat.log \
+    && mkdir /var/run/celery \
+    && chown -R user:user /var/run/celery/
 
 EXPOSE 8080
-CMD ["/usr/local/bin/uwsgi", "--ini", "uwsgi.ini"]
+CMD ["/bin/bash", "run.sh"]
