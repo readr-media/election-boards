@@ -6,11 +6,13 @@ from google.oauth2 import service_account
 import googleapiclient.discovery
 
 from boards.models import Boards
+from django.conf import settings
 
 SCOPES = ['https://www.googleapis.com/auth/spreadsheets.readonly']
 SERVICE_ACCOUNT_FILE = 'app/gcskeyfile.json'
 
-SPREADSHEET_ID = '19UjwwLiQ_jfpzsjG_VKlNn1b3dGoFCs3ZOR4s7yGb0I'
+SPREADSHEET_ID = settings.SPREADSHEET_ID
+
 RANGE_NAME = '表單回應 1!A:K'
 
 @periodic_task(
