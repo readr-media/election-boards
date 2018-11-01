@@ -70,7 +70,7 @@ LOGGING = {
 DATABASES = {
     'default': {
         # 'ENGINE': 'django.db.backends.postgresql',
-        'ENGINE': 'django.contrib.gis.db.backends.postgis', 
+        'ENGINE': 'django.contrib.gis.db.backends.postgis',
         'NAME': 'election_boards',
         'USER': '',
         'PASSWORD': '',
@@ -79,6 +79,7 @@ DATABASES = {
     }
 }
 
+CELERY_BROKER_URL = 'redis://:@127.0.0.1:6379'
 
 STATIC_ROOT = 'static'
 STATIC_URL = '/static/'
