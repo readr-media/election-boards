@@ -27,6 +27,7 @@ class Boards(models.Model):
         null=True,
         default=None
     )
+    note = models.CharField(max_length=512, null=True, blank=True)
 
     verified_amount = models.IntegerField(default=0)
     not_board_amount = models.IntegerField(default=0)
