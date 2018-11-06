@@ -4,9 +4,13 @@ from celery.schedules import crontab
 
 from google.oauth2 import service_account
 import googleapiclient.discovery
+from google.cloud import storage
 
 from boards.models import Boards
 from django.conf import settings
+
+import subprocess
+import time
 
 SCOPES = ['https://www.googleapis.com/auth/spreadsheets.readonly']
 SERVICE_ACCOUNT_FILE = 'app/gcskeyfile.json'
@@ -14,6 +18,39 @@ SERVICE_ACCOUNT_FILE = 'app/gcskeyfile.json'
 SPREADSHEET_ID = settings.SPREADSHEET_ID
 
 RANGE_NAME = '表單回應 1!A:L'
+
+@periodic_task(
+    run_every=(crontab(hour=3, minute=30)),
+    name='app.tasks.backup_db',
+    ignore_result=True,
+)
+def backup_db():
+
+    if settings.BACKUP_DB:
+        # Start to dump database
+        filename = 'dumps/election_board_{}.dump'.format(int(time.time()))
+        print('Start to back up database to file:{}'.format(filename))
+
+        db = settings.DATABASES['default']
+        command = 'pg_dump -Fc --dbname=postgresql://{}:{}@localhost/{} -f {}'.format(db['USER'], db['PASSWORD'], db['NAME'], filename)
+        pop = subprocess.Popen(command, shell=True)
+        pop.wait()
+        print('backup finished')
+
+        # Start upload procedure
+        client = storage.Client.from_service_account_json(SERVICE_ACCOUNT_FILE)
+
+        bucket_name = 'projects.readr.tw'
+        bucket = client.get_bucket(bucket_name)
+        blob = bucket.blob('election-board/{}'.format(filename))
+        blob.upload_from_filename(filename)
+
+        # Delete db dump
+        rmdb = subprocess.Popen('rm {}'.format(filename), shell=True)
+        rmdb.wait()
+        print('file {} deleted!'.format(filename))
+    else:
+        print('Set not to backup db')
 
 @periodic_task(
     run_every=(crontab(hour='*/6')),
