@@ -1,5 +1,5 @@
 # election-boards
-election-boards is the RESTful server for providing election boards information. It is written in **Django Rest Framework**, and a revision of rest part in g0v [councilor-vote-guide project](https://github.com/g0v/councilor-voter-guide.git).
+election-boards is the RESTful server for providing election boards information. It is written in **Django Rest Framework**, and a partial revision of REST server in g0v [councilor-vote-guide project](https://github.com/g0v/councilor-voter-guide.git).
 
 ## Prerequisite
 
@@ -78,4 +78,11 @@ python manage.py runserver
 ### In production mode
 ```bash
 uwsgi --ini uwsgi.ini
+```
+
+## Start Celery
+
+### In developing
+```bash
+celery -A election_boards worker -l info -B
 ```

@@ -3,6 +3,7 @@ from .base import *
 SECRET_KEY = 'bWFuYWdlLnB55Yiw5bqV5piv5bm55Zib55qECg=='
 DEBUG = True
 SPREADSHEET_ID = '19UjwwLiQ_jfpzsjG_VKlNn1b3dGoFCs3ZOR4s7yGb0I'
+BACKUP_DB = False
 
 LOGGING = {
     'version': 1,
@@ -70,7 +71,7 @@ LOGGING = {
 DATABASES = {
     'default': {
         # 'ENGINE': 'django.db.backends.postgresql',
-        'ENGINE': 'django.contrib.gis.db.backends.postgis', 
+        'ENGINE': 'django.contrib.gis.db.backends.postgis',
         'NAME': 'election_boards',
         'USER': '',
         'PASSWORD': '',
@@ -79,6 +80,7 @@ DATABASES = {
     }
 }
 
+CELERY_BROKER_URL = 'redis://:@127.0.0.1:6379'
 
 STATIC_ROOT = 'static'
 STATIC_URL = '/static/'
