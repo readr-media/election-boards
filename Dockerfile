@@ -8,7 +8,13 @@ WORKDIR /usr/src/app/election-boards
 ENV DJANGO_SETTINGS_MODULE election_boards.settings.production
 
 RUN apt-get update \
-    && apt-get install -y gcc gdal-bin supervisor \
+    && apt-get install -y gcc gdal-bin supervisor sudo \
+    && sudo apt-get install -y curl ca-certificates \
+    && curl https://www.postgresql.org/media/keys/ACCC4CF8.asc | sudo apt-key add - \
+    && sudo sh -c 'echo "deb http://apt.postgresql.org/pub/repos/apt/ jessie-pgdg main" > /etc/apt/sources.list.d/pgdg.list' \
+    && sudo apt-get update \
+    && mkdir -p /usr/share/man/man1 /usr/share/man/man7 dumps \
+    && sudo apt-get install -y postgresql-client-9.6 \
     && pip install --upgrade pip \
     && pip install -r requirements.txt \
     && mkdir -p /tmp/log/uwsgi \
