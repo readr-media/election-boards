@@ -13,18 +13,14 @@ RUN apt-get update \
     && curl https://www.postgresql.org/media/keys/ACCC4CF8.asc | sudo apt-key add - \
     && sudo sh -c 'echo "deb http://apt.postgresql.org/pub/repos/apt/ jessie-pgdg main" > /etc/apt/sources.list.d/pgdg.list' \
     && sudo apt-get update \
-    && mkdir -p /usr/share/man/man1 /usr/share/man/man7 dumps \
+    && mkdir -p /usr/share/man/man1 /usr/share/man/man7 dumps /tmp/log/uwsgi /var/log/celery /var/run/celery \
+    && chown -R user:user /usr/src/app/election-boards /tmp/log/uwsgi /var/run/celery\
     && sudo apt-get install -y postgresql-client-9.6 \
     && pip install --upgrade pip \
     && pip install -r requirements.txt \
-    && mkdir -p /tmp/log/uwsgi \
-    && chown -R user:user /tmp/log/uwsgi \
     && mv supervisor.conf/*.conf /etc/supervisor/conf.d \
-    && mkdir /var/log/celery \
-    && touch /var/log/celery/board_worker.log \
-    && touch /var/log/celery/board_beat.log \
-    && mkdir /var/run/celery \
-    && chown -R user:user /var/run/celery/
+    && touch /var/log/celery/worker.log \
+    && touch /var/log/celery/beat.log
 
 EXPOSE 8080
 CMD ["/bin/bash", "run.sh"]
