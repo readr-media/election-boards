@@ -14,6 +14,7 @@ Including another URLconf
     2. Add a URL to urlpatterns:  path('blog/', include('blog.urls'))
 """
 from django.urls import path, re_path, include
+from django.contrib import admin
 
 from rest_framework import routers
 from candidates.views import CandidatesTermsViewSet
@@ -21,6 +22,9 @@ from councilors.views import CouncilorsDetailViewSet
 from elections.views import ElectionsViewSet
 from drf_yasg.views import get_schema_view
 from drf_yasg import openapi
+
+from django.conf import settings
+from django.contrib.auth import logout
 
 router = routers.DefaultRouter()
 router.register(r'candidates_terms', CandidatesTermsViewSet)
@@ -46,4 +50,10 @@ urlpatterns = [
     re_path(r'^api/', include(router.urls)),
     re_path(r'^api/', include('boards.urls')),
     re_path(r'^api/docs/$', schema_view.with_ui('swagger', cache_timeout=0), name='schema-swagger-ui'),
+    
+    path('admin/', admin.site.urls),
+    
+    path('auth/', include('social_django.urls', namespace='social')),
+    path('logout/', logout, {'next_page': settings.LOGOUT_REDIRECT_URL}, name='logout'),
+    # path('accounts/', include('allauth.urls')),
 ]
