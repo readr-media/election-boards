@@ -9,7 +9,7 @@ coreapi==2.3.3
 coreschema==0.0.4
 Django==2.1.2
 django-filter==2.0.0
-djangorestframework==3.8.2
+djangorestframework==3.9.1
 drf-yasg==1.10.1
 flex==6.13.2
 google-api-core==1.5.1
@@ -25,7 +25,7 @@ httplib2==0.11.3
 idna==2.7
 inflection==0.3.1
 itypes==1.1.0
-Jinja2==2.10
+Jinja2==2.10.1
 jsonpointer==1.14
 jsonschema==2.6.0
 kombu==4.2.1
@@ -37,7 +37,7 @@ psycopg2-binary==2.7.5
 pyasn1==0.4.4
 pyasn1-modules==0.2.2
 pytz==2018.5
-PyYAML==3.13
+PyYAML==3.11
 redis==2.10.6
 requests==2.20.0
 requests-oauthlib==1.0.0
@@ -48,7 +48,7 @@ six==1.11.0
 strict-rfc3339==0.7
 swagger-spec-validator==2.4.0
 uritemplate==3.0.0
-urllib3==1.23
+urllib3==1.24.2
 uWSGI==2.0.17.1
 validate-email==1.3
 vine==1.1.4
