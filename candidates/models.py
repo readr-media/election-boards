@@ -4,6 +4,7 @@ from django.contrib.postgres.fields import ArrayField, JSONField
 
 from councilors.models import CouncilorsDetail
 # Create your models here.
+
 class Candidates(models.Model):
     
     uid = models.UUIDField(unique=True, default=uuid.uuid4, editable=False)
@@ -17,7 +18,11 @@ class Candidates(models.Model):
     identifiers = JSONField(null=True)
     data = JSONField(null=True)
     
-    def __unicode__(self):
+    class Meta:
+        verbose_name = 'Candidate'
+        verbose_name_plural = 'Candidates'
+
+    def __str__(self):
         return self.name
 
 class Terms(models.Model):
@@ -55,5 +60,8 @@ class Terms(models.Model):
         index_together = ['election_year', 'county', 'constituency']
         ordering = ['county','type','id']
     
-    def __unicode__(self):
+        verbose_name = 'Term'
+        verbose_name_plural = 'Terms'
+
+    def __str__(self):
         return self.name
