@@ -21,6 +21,8 @@ class Boards(models.Model):
     uploaded_at = models.DateTimeField(null=True, auto_now_add=True)
     uploaded_by = models.UUIDField(editable=False, blank=False, null=False)
 
+    uploader_name = models.CharField(max_length=25, blank=True)
+
     price = models.IntegerField(null=True)
     receipt = ArrayField(
         models.CharField(max_length=256),
