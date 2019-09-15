@@ -9,6 +9,9 @@ from drf_yasg import openapi
 
 from django.db.models import Max
 
+from rest_framework.decorators import api_view, permission_classes
+from rest_framework import permissions
+
 class MultiBoardsViewSet(viewsets.ModelViewSet):
     queryset = Boards.objects.all()
     permission_classes = []
@@ -78,3 +81,11 @@ class SingleCheckViewSet(mixins.CreateModelMixin,
 class MultiChecksViewSet(mixins.CreateModelMixin, viewsets.GenericViewSet):
     permission_classes = []
     serializer_class = MultiChecksDeserializer
+
+@swagger_auto_schema(method='get')
+@api_view(['GET'])
+@permission_classes((permissions.AllowAny,))
+def gongde_list(request, format=None):
+    name_list = Boards.objects.exclude(uploader_name__exact='').values_list('uploader_name', flat=True).distinct()
+    results = {'results': name_list}
+    return response.Response(results)
