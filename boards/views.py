@@ -86,6 +86,6 @@ class MultiChecksViewSet(mixins.CreateModelMixin, viewsets.GenericViewSet):
 @api_view(['GET'])
 @permission_classes((permissions.AllowAny,))
 def gongde_list(request, format=None):
-    name_list = Boards.objects.exclude(uploader_name__exact='').values_list('uploader_name', flat=True).distinct()
+    name_list = Boards.objects.exclude(uploader_name__exact='').values_list('uploader_name', flat=True).distinct().order_by()
     results = {'results': name_list}
     return response.Response(results)
