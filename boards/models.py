@@ -35,6 +35,10 @@ class Boards(models.Model):
     not_board_amount = models.IntegerField(default=0)
     is_board = models.BooleanField(default=False)
 
+    slogan = models.CharField(max_length=128, null=True)
+    party_icon = models.BooleanField(default=False, null=False) 
+    board_type = models.CharField(max_length=16, null=True)
+
     class Meta:
         ordering = ['-uploaded_at']
 
@@ -42,7 +46,11 @@ class Checks(models.Model):
 
     board = models.ForeignKey(Boards, related_name='board_checks', on_delete=models.CASCADE)
     candidates = models.ManyToManyField(Terms, related_name='check_candidates')
+
     slogan = models.CharField(max_length=128, null=True)
+    party_icon = models.BooleanField(default=False, null=False) 
+    board_type = models.CharField(max_length=16, null=True)
+    
     is_board = models.BooleanField(default=False, null=False)
     type = models.IntegerField(null=False, default=0)  # Check type: 1=single check, 2=multiple check
 
