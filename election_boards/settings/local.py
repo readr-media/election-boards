@@ -81,11 +81,3 @@ DATABASES = {
 }
 
 CELERY_BROKER_URL = 'redis://:@127.0.0.1:6379'
-
-STATIC_ROOT = 'static'
-STATIC_URL = '/static/'
-
-
-# STATICFILES_DIRS = [
-#     os.path.join(BASE_DIR, 'static'),
-# ]
