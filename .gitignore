@@ -1,11 +1,16 @@
+# MacOS index
+.DS_Store
+# Python cache
 __pycache__
+# Developing configs
+*.swp
+.vscode
+.python-version
+# Application secrets configs
 election_boards/settings/dev.py
 election_boards/settings/production.py
 election_boards/settings/secrets.py
-dumps/*.dump
-# */migrations
-# migrations/*
-*.swp
-.DS_Store
-celerybeat-schedule.db
 app/gcskeyfile.json
+# Database dump & celery db
+dumps/*.dump
+celerybeat-schedule.db
