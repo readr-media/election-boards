@@ -19,9 +19,10 @@ pipeline:
     image: gcr.io/mirrormedia-1470651750304/drone-cloud-sdk:latest
     secrets: [google_credentials]
     commands:
-    - gcloud source repos clone default ../default
-    - cp ../default/election-boards/dev/dev.py ./election_boards/settings/production.py
-    - cp ../default/keystone/gcskeyfile.json ./app/gcskeyfile.json
+    - gcloud source repos clone configs configs
+    - cp configs/readr-media/election-boards/dev/dev.py ./election_boards/settings/production.py
+    - cp configs/gcskeyfile.json ./app/gcskeyfile.json
+    - rm -rf configs
     when:
       event: [push]
       branch: dev
@@ -30,11 +31,12 @@ pipeline:
     image: gcr.io/mirrormedia-1470651750304/drone-cloud-sdk:latest
     secrets: [google_credentials]
     commands:
-    - gcloud source repos clone default ../default
-    - cp ../default/election-boards/production/production.py ./election_boards/settings/production.py
-    - cp ../default/election-boards/production/uwsgi.ini ./uwsgi.ini
-    - cp ../default/election-boards/production/.kube.yml ./.kube.yml
-    - cp ../default/keystone/gcskeyfile.json ./app/gcskeyfile.json
+    - gcloud source repos clone configs configs
+    - cp configs/readr-media/election-boards/production/production.py ./election_boards/settings/production.py
+    - cp configs/readr-media/election-boards/production/uwsgi.ini ./uwsgi.ini
+    - cp configs/readr-media/election-boards/production/.kube.yml ./.kube.yml
+    - cp configs/gcskeyfile.json ./app/gcskeyfile.json
+    - rm -rf configs
     when:
       event: [push]
       branch: master

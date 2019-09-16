@@ -11,6 +11,7 @@ https://docs.djangoproject.com/en/2.1/ref/settings/
 """
 
 import os
+from .secrets import *
 
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
@@ -26,6 +27,18 @@ ALLOWED_HOSTS = []
 # Application definition
 
 INSTALLED_APPS = [
+    
+    'django.contrib.admin',
+    'django.contrib.auth',
+    'django.contrib.contenttypes',
+    'django.contrib.sessions',
+    'django.contrib.messages',
+    'django.contrib.staticfiles',
+    'django.contrib.gis',
+
+    'social_django',
+
+    'users',
     'elections',
     'councilors',
     'candidates',
@@ -33,14 +46,7 @@ INSTALLED_APPS = [
     'app',
     'rest_framework',
     'django_filters',
-    'drf_yasg',
-    # 'django.contrib.admin',
-    'django.contrib.auth',
-    'django.contrib.contenttypes',
-    'django.contrib.sessions',
-    'django.contrib.messages',
-    'django.contrib.staticfiles',
-    'django.contrib.gis',
+    'drf_yasg'
 ]
 
 MIDDLEWARE = [
@@ -53,12 +59,32 @@ MIDDLEWARE = [
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
 ]
 
+# Auth settings for admin
+AUTH_USER_MODEL = 'users.User'
+AUTHENTICATION_BACKENDS = (
+    'social_core.backends.google.GoogleOAuth2',
+    'django.contrib.auth.backends.ModelBackend'
+)
+
+
+
+LOGIN_URL = '/auth/login/google-oauth2/'
+
+LOGIN_REDIRECT_URL = '/admin'
+LOGOUT_REDIRECT_URL = '/admin'
+
+# SOCIAL_AUTH_LOGIN_REDIRECT_URL = '/logged-in/'
+SOCIAL_AUTH_USER_MODEL = 'users.User'
+SOCIAL_AUTH_URL_NAMESPACE = 'social'
+# SOCIAL_AUTH_GOOGLE_OAUTH2_WHITELISTED_DOMAINS = ['mirrormedia.mg']
+SOCIAL_AUTH_GOOGLE_OAUTH2_WHITELISTED_EMAILS = ['ichiaohsu@mirrormedia.mg', 'azoezoe@mirrormedia.mg']
+
 ROOT_URLCONF = 'election_boards.urls'
 
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [],
+        'DIRS': [os.path.join(BASE_DIR, 'templates')],
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [
@@ -66,6 +92,8 @@ TEMPLATES = [
                 'django.template.context_processors.request',
                 'django.contrib.auth.context_processors.auth',
                 'django.contrib.messages.context_processors.messages',
+                'social_django.context_processors.backends',
+                'social_django.context_processors.login_redirect',  
             ],
         },
     },
@@ -127,4 +155,5 @@ USE_TZ = True
 
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/2.1/howto/static-files/
-# STATIC_URL = '/static/'
+STATIC_ROOT = 'static'
+STATIC_URL = '/static/'
