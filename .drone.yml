@@ -21,6 +21,7 @@ pipeline:
     commands:
     - gcloud source repos clone configs configs
     - cp configs/readr-media/election-boards/dev/dev.py ./election_boards/settings/production.py
+    - cp configs/readr-media/election-boards/secrets.py ./election_boards/settings/secrets.py
     - cp configs/gcskeyfile.json ./app/gcskeyfile.json
     - rm -rf configs
     when:
@@ -33,6 +34,7 @@ pipeline:
     commands:
     - gcloud source repos clone configs configs
     - cp configs/readr-media/election-boards/production/production.py ./election_boards/settings/production.py
+    - cp configs/readr-media/election-boards/secrets.py ./election_boards/settings/secrets.py
     - cp configs/readr-media/election-boards/production/uwsgi.ini ./uwsgi.ini
     - cp configs/readr-media/election-boards/production/.kube.yml ./.kube.yml
     - cp configs/gcskeyfile.json ./app/gcskeyfile.json
