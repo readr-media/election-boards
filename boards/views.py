@@ -49,7 +49,13 @@ class SingleCheckViewSet(mixins.CreateModelMixin,
         openapi.Parameter('uploaded_by', openapi.IN_QUERY, description="exclude boards uploaded by [uploaded_by]", type=openapi.TYPE_STRING),
         openapi.Parameter('skip_board', openapi.IN_QUERY, description="Skip board with id prior to [skip_board]", type=openapi.TYPE_INTEGER)])
     def list(self, request):
- 
+        """
+        Order boards by verified_amount and uploaded_at, then get the first board to request
+
+        If there is no board, just filter uploaded_by and skip_board id if there is any, 
+        and present the first board
+        """
+
         queryset = self.filter_queryset(self.get_queryset())
         # If nothing selected(reach the end), sql query again and start from beginning
         if not queryset.exists():
@@ -62,16 +68,14 @@ class SingleCheckViewSet(mixins.CreateModelMixin,
             s_b = self.request.query_params.get('skip_board', None)
             if s_b is not None:
                 queryset = queryset.exclude(id=s_b)
-
+        
+        # Only show first board to check by spec
         serializer = self.get_serializer(queryset[0])
 
         return response.Response(serializer.data)
 
     def get_queryset(self):
-        qs = Boards.objects.order_by('verified_amount', 'uploaded_at')
-        if self.action == 'list' or self.action == 'retrieve':
-            qs = Boards.objects.annotate(slogan=Max('board_checks__slogan')).order_by('verified_amount', 'uploaded_at')
-        return qs
+        return Boards.objects.order_by('verified_amount', 'uploaded_at')
  
     def get_serializer_class(self):
         if self.action == 'create':
