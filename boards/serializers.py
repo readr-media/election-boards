@@ -154,4 +154,4 @@ class SingleCheckSerializer(serializers.ModelSerializer):
     class Meta:
         model = Boards
         fields = ('id', 'candidates', 'image', 'verified_amount',
-                  'uploaded_by', 'slogan')
+                  'uploaded_by', 'slogan', 'party_icon', 'board_type')
