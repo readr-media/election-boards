@@ -81,3 +81,10 @@ DATABASES = {
 }
 
 CELERY_BROKER_URL = 'redis://:@127.0.0.1:6379'
+
+# Static prefix for local development
+STATIC_URL = '/static/'
+
+# Redirect target for local development
+LOGIN_REDIRECT_URL = '/admin'
+LOGOUT_REDIRECT_URL = '/admin'
