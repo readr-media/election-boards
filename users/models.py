@@ -2,6 +2,8 @@ from django.contrib.auth.models import AbstractUser, UserManager
 
 from django.utils import timezone
 
+from django.contrib.auth.models import Group
+
 class CustomUserManager(UserManager):
     def create_user(self, username, email=None, password=None, **extra_fields):
         """Create users with staff authentications when domain fixes"""
@@ -12,6 +14,8 @@ class CustomUserManager(UserManager):
                           date_joined=timezone.now(), **extra_fields)
         user.set_password(password)
         user.save(using=self._db)
+        group = Group.objects.get(name='board-working-group') 
+        user.groups.add(group)
         return user
                                  
 # Create your models here.
