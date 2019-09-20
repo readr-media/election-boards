@@ -16,13 +16,10 @@ from .secrets import *
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
-
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/2.1/howto/deployment/checklist/
 
-
 ALLOWED_HOSTS = []
-
 
 # Application definition
 
@@ -66,18 +63,13 @@ AUTHENTICATION_BACKENDS = (
     'django.contrib.auth.backends.ModelBackend'
 )
 
-
-
+# Login link subpath for Google OAuth 
+# Redirect targets are set in seperate files for different deployment environments
 LOGIN_URL = '/auth/login/google-oauth2/'
 
-LOGIN_REDIRECT_URL = '/admin'
-LOGOUT_REDIRECT_URL = '/admin'
-
-# SOCIAL_AUTH_LOGIN_REDIRECT_URL = '/logged-in/'
 SOCIAL_AUTH_USER_MODEL = 'users.User'
 SOCIAL_AUTH_URL_NAMESPACE = 'social'
-# SOCIAL_AUTH_GOOGLE_OAUTH2_WHITELISTED_DOMAINS = ['mirrormedia.mg']
-SOCIAL_AUTH_GOOGLE_OAUTH2_WHITELISTED_EMAILS = ['ichiaohsu@mirrormedia.mg', 'azoezoe@mirrormedia.mg']
+SOCIAL_AUTH_GOOGLE_OAUTH2_WHITELISTED_DOMAINS = ['mirrormedia.mg']
 
 ROOT_URLCONF = 'election_boards.urls'
 
@@ -156,4 +148,3 @@ USE_TZ = True
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/2.1/howto/static-files/
 STATIC_ROOT = 'static'
-STATIC_URL = '/static/'
