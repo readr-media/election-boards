@@ -53,6 +53,7 @@ class Terms(models.Model):
     links = JSONField(null=True)
     platform = models.TextField(blank=True, null=True)
     politicalcontributions = JSONField(null=True)
+    status = models.CharField(db_index=True, default='', max_length=100)
     data = JSONField(null=True)
     
     class Meta:
