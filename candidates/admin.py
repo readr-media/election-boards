@@ -10,7 +10,7 @@ class TermsInline(admin.StackedInline):
 @admin.register(Candidates)
 class CandidatesAdmin(admin.ModelAdmin):
     search_fields = ('name',)
-    inlines = (TermsInline,)
+    # inlines = (TermsInline,)
     exclude = ('uid',)
 
 # Register your models here.
