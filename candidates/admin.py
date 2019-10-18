@@ -11,12 +11,10 @@ class TermsInline(admin.StackedInline):
 class CandidatesAdmin(admin.ModelAdmin):
     search_fields = ('name',)
     # inlines = (TermsInline,)
-    exclude = ('uid',)
 
 # Register your models here.
 @admin.register(Terms)
 class TermsAdmin(admin.ModelAdmin):
     list_display = ('candidate', 'gender', 'party', 'election_year')
-    search_fields = ('name',)
+    search_fields = ('name','candidate__name')
     list_filter = ('election_year', 'party')
-    exclude = ('uid',)
