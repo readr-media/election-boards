@@ -14,9 +14,10 @@ class Candidates(models.Model):
         models.CharField(max_length=100),
         null=True,
         default=None,
+        blank=True
     )
-    identifiers = JSONField(null=True)
-    data = JSONField(null=True)
+    identifiers = JSONField(null=True, blank=True)
+    data = JSONField(null=True, blank=True)
     
     class Meta:
         verbose_name = 'Candidate'
@@ -27,11 +28,11 @@ class Candidates(models.Model):
 
 class Terms(models.Model):
     
-    uid = models.CharField(max_length=70, unique=True)
+    uid = models.CharField(max_length=70, unique=True, editable=False)
     type = models.CharField(db_index=True, max_length=20)
     candidate = models.ForeignKey(Candidates, to_field='uid', related_name='each_terms', on_delete=models.PROTECT)
     elected_councilor = models.OneToOneField('councilors.Councilorsdetail', blank=True, null=True, related_name='elected_candidate', on_delete=models.PROTECT)
-    councilor_terms = JSONField(null=True)
+    councilor_terms = JSONField(null=True, blank=True)
     election_year = models.CharField(db_index=True, max_length=100)
     number = models.IntegerField(db_index=True, blank=True, null=True)
     name = models.CharField(max_length=100)
@@ -39,22 +40,22 @@ class Terms(models.Model):
     party = models.CharField(db_index=True, max_length=100, blank=True, null=True)
     constituency = models.IntegerField(db_index=True)
     county = models.CharField(db_index=True, max_length=100)
-    district = models.TextField(db_index=True, blank=True, null=True)
+    district = models.TextField(db_index=True, blank=False, null=True)
     votes = models.IntegerField(blank=True, null=True)
     votes_percentage = models.CharField(max_length=100, blank=True, null=True)
-    votes_detail = JSONField(null=True)
+    votes_detail = JSONField(null=True, blank=True)
     elected = models.NullBooleanField(db_index=True)
     occupy = models.NullBooleanField(db_index=True)
-    contact_details = JSONField(null=True)
+    contact_details = JSONField(null=True, blank=True)
     education = models.TextField(blank=True, null=True)
     experience = models.TextField(blank=True, null=True)
     remark = models.TextField(blank=True, null=True)
     image = models.URLField(blank=True, null=True)
-    links = JSONField(null=True)
+    links = JSONField(null=True, blank=True)
     platform = models.TextField(blank=True, null=True)
-    politicalcontributions = JSONField(null=True)
-    status = models.CharField(db_index=True, default='', max_length=100)
-    data = JSONField(null=True)
+    politicalcontributions = JSONField(null=True, blank=True)
+    status = models.CharField(db_index=True, default='', max_length=100, blank=True)
+    data = JSONField(null=True, blank=True)
     
     class Meta:
         unique_together = ("candidate", "election_year")
