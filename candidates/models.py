@@ -66,3 +66,9 @@ class Terms(models.Model):
 
     def __str__(self):
         return self.name
+
+    def save(self, *args, **kwargs):
+        """Alter uid for Terms manually"""
+        self.uid = str(self.candidate.uid) + "-" + self.election_year
+
+        super(Terms, self).save(*args, **kwargs)
