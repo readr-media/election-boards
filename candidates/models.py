@@ -37,7 +37,7 @@ class Terms(models.Model):
     number = models.IntegerField(db_index=True, blank=True, null=True)
     name = models.CharField(max_length=100)
     gender = models.CharField(max_length=100, blank=True, null=True)
-    party = models.CharField(db_index=True, max_length=100, blank=True, null=True)
+    party = models.CharField(db_index=True, max_length=100, null=True)
     constituency = models.IntegerField(db_index=True)
     county = models.CharField(db_index=True, max_length=100)
     district = models.TextField(db_index=True, blank=False, null=True)
