@@ -14,6 +14,7 @@ class BoardsFilter(filters.FilterSet):
     not_board_amount = filters.NumberFilter(method='filter_not_board_amount')
     coordinates = filters.CharFilter(method='filter_coordinates')
     candidates = filters.ModelChoiceFilter(queryset=Terms.objects.all())
+    election_year = filters.CharFilter(field_name='candidates__election_year', lookup_expr='exact')
 
     def filter_coordinates(self, qs, name, value):
         if not value:
