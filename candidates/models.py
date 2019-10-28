@@ -25,6 +25,14 @@ class Candidates(models.Model):
 
     def __str__(self):
         return self.name
+    
+    def save(self, *args, **kwargs):
+        """Set uid to uuid ver.4 if it's not set. This is for inline form when using admin"""
+        
+        if self.uid is None:
+            self.uid = uuid.uuid4()
+
+        super(Candidates, self).save(*args, **kwargs)
 
 class Terms(models.Model):
     
