@@ -26,6 +26,10 @@ LOGGING = {
         },
     },
 }
+
+USE_X_FORWARDED_HOST = True
+FORCE_SCRIPT_NAME = '/project/election-boards'
+
 # # Configs for local with uwsgi
 # DEBUG = False
 # ALLOWED_HOSTS = ['*']
