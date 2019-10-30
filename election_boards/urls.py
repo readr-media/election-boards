@@ -26,7 +26,7 @@ from drf_yasg import openapi
 from django.conf import settings
 from django.contrib.auth import logout
 
-router = routers.DefaultRouter()
+router = routers.DefaultRouter(trailing_slash=False)
 router.register(r'candidates_terms', CandidatesTermsViewSet)
 router.register(r'councilors_terms', CouncilorsDetailViewSet)
 router.register(r'elections', ElectionsViewSet)
