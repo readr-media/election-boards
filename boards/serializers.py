@@ -99,10 +99,12 @@ class SingleCheckDeserializer(serializers.ModelSerializer):
 
         if headcount_max is None:
             headcount_max = Checks.objects.filter(board=validated_data['board'], is_original=True).only('headcount')[0].headcount
-        # Select 'headcount_max' most frequent candidates in check
+        # Count how many times a board is identified belonging to a candidates.
+        # If the counts equals, sort them with created_at
+        # The original answer is counted as a verification
         most_candidates = [p['candidates__id'] for p in Checks.objects.filter(board=validated_data['board']) \
-            .values('candidates__id').annotate(hcm=Count('candidates__id')).order_by('-hcm') \
-            if p['candidates__id'] is not None and p['hcm'] != 0]
+            .values('candidates__id').annotate(verify_frequency=Count('candidates__id'), last_update=Max('created_at')).order_by('-verify_frequency','-last_update') \
+            if p['candidates__id'] is not None and p['verify_frequency'] != 0]
 
         if headcount_max > 0:
             if len(most_candidates) > headcount_max:
@@ -115,6 +117,7 @@ class SingleCheckDeserializer(serializers.ModelSerializer):
         return check
 
 class MultiChecksDeserializer(serializers.Serializer):
+    """Convert input when validate multiple boards"""
     is_board = serializers.ListField(
         child = serializers.PrimaryKeyRelatedField(queryset=Boards.objects.all())
     )
@@ -141,9 +144,10 @@ class MultiChecksDeserializer(serializers.Serializer):
                 check = Checks(**{'board':board, 'is_board': False, 'created_by': created_by, 'type': 2, 'is_original': False})
                 check.save()
 
-                ib = Boards.objects.get(pk=board)
-                ib.not_board_amount += 1
-                ib.save()
+                # ib = Boards.objects.get(pk=board)
+                board.not_board_amount += 1
+                board.save()
+                
         return validated_data
 
 class SingleCheckSerializer(serializers.ModelSerializer):
