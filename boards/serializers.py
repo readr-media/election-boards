@@ -117,6 +117,7 @@ class SingleCheckDeserializer(serializers.ModelSerializer):
         return check
 
 class MultiChecksDeserializer(serializers.Serializer):
+    """Convert input when validate multiple boards"""
     is_board = serializers.ListField(
         child = serializers.PrimaryKeyRelatedField(queryset=Boards.objects.all())
     )
@@ -143,9 +144,10 @@ class MultiChecksDeserializer(serializers.Serializer):
                 check = Checks(**{'board':board, 'is_board': False, 'created_by': created_by, 'type': 2, 'is_original': False})
                 check.save()
 
-                ib = Boards.objects.get(pk=board)
-                ib.not_board_amount += 1
-                ib.save()
+                # ib = Boards.objects.get(pk=board)
+                board.not_board_amount += 1
+                board.save()
+                
         return validated_data
 
 class SingleCheckSerializer(serializers.ModelSerializer):
